@@ -1,0 +1,3 @@
+class TI_TypeLibWrapper
+{
+}
