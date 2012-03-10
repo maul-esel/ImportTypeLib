@@ -32,6 +32,9 @@ class TI_TypeLibWrapper
 			typename := this.GetName(A_Index - 1), obj := valid_typekinds[typeKind]
 			this[typename] := new obj(typeInfo)
 		}
+
+		if (this != TI_Wrapper.TI_TypeLibWrapper)
+			this.Insert("__New", Func("TI_AbstractClassConstructor"))
 	}
 
 	GetName(index = -1)
