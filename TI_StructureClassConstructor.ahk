@@ -1,3 +1,3 @@
-TI_StructureClassConstructor(_this, p*)
+TI_StructureClassConstructor(this, p*)
 {
 }
