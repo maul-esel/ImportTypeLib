@@ -6,4 +6,9 @@ class TI_EnumWrapper extends TI_Wrapper.TI_WrapperBaseClass
 		if (this != TI_Wrapper.TI_EnumWrapper)
 			this.Insert("__New", Func("TI_AbstractClassConstructor"))
 	}
+
+	__Get(field)
+	{
+		; ...
+	}
 }

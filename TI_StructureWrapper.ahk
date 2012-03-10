@@ -6,4 +6,14 @@ class TI_StructureWrapper extends TI_Wrapper.TI_WrapperBaseClass
 		if (this != TI_Wrapper.TI_StructureWrapper)
 			this.Insert("__New", Func("TI_StructureClassConstructor"))
 	}
+
+	__Get(field)
+	{
+		; ...
+	}
+
+	__Set(field, value)
+	{
+		; ...
+	}
 }
