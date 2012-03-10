@@ -36,5 +36,4 @@ ImportTypeLib(lib, version = "1.0")
 #include TI_StructureConstructor.ahk
 #include TI_InterfaceConstructor.ahk
 
-#include TI_AbstractClass.ahk
 #include TI_Wrapper.ahk

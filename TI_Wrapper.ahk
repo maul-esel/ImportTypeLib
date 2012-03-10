@@ -1,5 +1,7 @@
-class TI_Wrapper extends TI_AbstractClass
+class TI_Wrapper
 {
+	static __New := Func("TI_AbstractClassConstructor")
+
 	#include TI_WrapperBaseClass.ahk
 	#include TI_ExecutableWrapperBaseClass.ahk
 
