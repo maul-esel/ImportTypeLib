@@ -1,6 +1,6 @@
 TI_CoClassConstructor(this, iid = 0)
 {
-	local instance, typeAttr, info, hr, clsid, iid_mem, implCount, implFlags, implHref, implInfo, implAttr
+	local instance, typeAttr, info, hr, iid_mem, implCount, implFlags, implHref, implInfo, implAttr
 	static IMPLTYPEFLAG_FDEFAULT := 1
 
 	info := this["internal://typeinfo-instance"]
@@ -55,17 +55,13 @@ TI_CoClassConstructor(this, iid = 0)
 					this["internal://default-iid"] := GUID2String(iid)
 				}
 			}
+			DllCall(NumGet(NumGet(info+0), 19*A_PtrSize, "Ptr"), "Ptr", info, "Ptr", typeAttr) ; ITypeInfo::ReleaseTypeAttr()
 		}
 	}
 	else
 	{
 		iid := TI_ConvertGUID(iid, iid_mem)
 	}
-
-	VarSetCapacity(clsid, 16, 00)
-	Mem_Copy(typeAttr, &clsid, 16) ; TYPEATTR::guid
-
-	DllCall(NumGet(NumGet(info+0), 19*A_PtrSize, "Ptr"), "Ptr", info, "Ptr", typeAttr) ; ITypeInfo::ReleaseTypeAttr()
 
 	hr := DllCall(NumGet(NumGet(info+0), 16*A_PtrSize, "Ptr"), "Ptr", info, "Ptr", 0, "Ptr", iid, "Ptr*", instance, "Int") ; ITypeInfo::CreateInstance()
 	if (FAILED(hr) || !instance)
