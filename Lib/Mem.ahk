@@ -14,5 +14,5 @@ Mem_Release(buffer)
 }
 Mem_Copy(src, dest, bytes)
 {
-	DllCall("RtlMoveMemory", "Ptr", dest, "Ptr", src, "UInt", size)
+	DllCall("RtlMoveMemory", "Ptr", dest, "Ptr", src, "UInt", bytes)
 }
