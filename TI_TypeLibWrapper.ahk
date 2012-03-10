@@ -42,7 +42,7 @@ class TI_TypeLibWrapper
 		hr := DllCall(NumGet(NumGet(lib+0), 09*A_PtrSize, "Ptr"), "Ptr", lib, "UInt", index, "Ptr*", name, "Ptr*", 0, "UInt*", 0, "Ptr*", 0, "Int")
 		if (FAILED(hr))
 		{
-			throw Exception("Name for " (index == -1 ? "type library" : "type description no. " index) " could not be read.", -1, TI_FormatError(hr))
+			throw Exception("Name for the " (index == -1 ? "type library" : "type description no. " index) " could not be read.", -1, TI_FormatError(hr))
 		}
 
 		return StrGet(name, "UTF-16")
