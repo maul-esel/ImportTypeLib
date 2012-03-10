@@ -4,7 +4,7 @@ class TI_WrapperBaseClass
 	{
 		local hr, name
 
-		this["internal://typeInfo-instance"] := typeInfo
+		this["internal://typeinfo-instance"] := typeInfo
 
 		hr := DllCall(NumGet(NumGet(typeInfo+0), 12*A_PtrSize, "Ptr"), "Ptr", typeInfo, "Int", -1, "Ptr*", name, "Ptr*", 0, "UInt*", 0, "Ptr*", 0, "Int")
 		if (FAILED(hr))
