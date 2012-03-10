@@ -12,7 +12,7 @@ Mem_Release(buffer)
 {
 	return DllCall("HeapFree", "Ptr", Mem_GetHeap(), "UInt", 0, "Ptr", buffer, "Int")
 }
-Mem_Copy(dest, src, bytes)
+Mem_Copy(src, dest, bytes)
 {
 	DllCall("RtlMoveMemory", "Ptr", dest, "Ptr", src, "UInt", size)
 }
