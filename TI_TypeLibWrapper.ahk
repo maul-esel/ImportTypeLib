@@ -47,4 +47,69 @@ class TI_TypeLibWrapper
 
 		return StrGet(name, "UTF-16")
 	}
+
+	GetGUID(obj = -1, returnRaw = false, passRaw = false)
+	{
+		local hr, guid, lib, info, attr, result
+
+		lib := this["internal://typelib-instance"]
+		if obj is not integer
+		{
+			if (!IsObject(obj)) ; it's a string, a field name
+				obj := this[obj]
+
+			if (IsObject(obj)) ; a field, either passed directly or via name
+				info := obj["internal://typeinfo-instance"]
+			else
+				throw Exception("Field could not be retrieved.", -1)
+		}
+		else if (obj != -1)
+		{
+			if (passRaw)
+				info := obj ; also allow passing an ITypeInfo pointer directly
+			else
+			{
+				hr := DllCall(NumGet(NumGet(lib+0), 04*A_PtrSize, "Ptr"), "Ptr", lib, "UInt", obj, "Ptr*", info, "Int") ; ITypeLib::GetTypeInfo()
+				if (FAILED(hr) || !info)
+				{
+					throw Exception("Type information could not be read.", -1, TI_FormatError(hr))
+				}
+			}
+		}
+
+		if (obj == -1)
+		{
+			hr := DllCall(NumGet(NumGet(lib+0), 07*A_PtrSize, "Ptr"), "Ptr", lib, "Ptr*", attr, "Int") ; ITypeLib::GetLibAttr()
+			if (FAILED(hr) || !attr)
+			{
+				throw Exception("TLIBATTR could not be read.", -1, TI_FormatError(hr))
+			}
+
+			guid := Mem_Allocate(16), Mem_Copy(attr, guid, 16) ; TLIBATTR::guid
+			if (returnRaw)
+				result := guid
+			else
+				result := GUID2String(guid), Mem_Release(guid)
+
+			DllCall(NumGet(NumGet(lib+0), 12*A_PtrSize, "Ptr"), "Ptr", lib, "Ptr", attr) ; ITypeLib::ReleaseTLibAttr()
+		}
+		else
+		{
+			hr := DllCall(NumGet(NumGet(info+0), 03*A_PtrSize, "Ptr"), "Ptr", info, "Ptr*", attr, "Int") ; ITypeInfo::GetTypeAttr()
+			if (FAILED(hr) || !attr)
+			{
+				throw Exception("TYPEATTR could not be read.", -1, TI_FormatError(hr))
+			}
+
+			guid := Mem_Allocate(16), Mem_Copy(attr, guid, 16) ; TYPEATTR::guid
+			if (returnRaw)
+				result := guid
+			else
+				result := GUID2String(guid), Mem_Release(guid)
+
+			DllCall(NumGet(NumGet(info+0), 19*A_PtrSize, "Ptr"), "Ptr", info, "Ptr", attr, "Int") ; ITypeInfo::ReleaseTypeAttr()
+		}
+
+		return result
+	}
 }
