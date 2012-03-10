@@ -27,5 +27,9 @@ ImportTypeLib(lib, version = "1.0")
 	return new TI_Wrapper.TI_TypeLibWrapper(lib)
 }
 
+#include TI_CoClassConstructor.ahk
+#include TI_AbstractClassConstructor.ahk
+#include TI_StructureClassConstructor.ahk
+
 #include TI_AbstractClass.ahk
 #include TI_Wrapper.ahk

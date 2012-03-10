@@ -7,8 +7,3 @@ class TI_StructureWrapper extends TI_Wrapper.TI_WrapperBaseClass
 			this.Insert("__New", Func("TI_StructureClassConstructor"))
 	}
 }
-
-TI_StructureClassConstructor(_this, p*)
-{
-	
-}
