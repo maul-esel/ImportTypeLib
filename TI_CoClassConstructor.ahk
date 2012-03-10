@@ -14,7 +14,12 @@ TI_CoClassConstructor(this, iid = 0)
 	{
 		if (this["internal://default-iid"])
 		{
-			iid := GUID_FromString(this["internal://default-iid"], iid_mem)
+			hr := GUID_FromString(this["internal://default-iid"], iid_mem)
+			if (FAILED(hr))
+			{
+				throw Exception("GUID could not be converted.", -1, TI_FormatError(hr))
+			}
+			iid := &iid_mem
 		}
 		else
 		{
@@ -60,7 +65,12 @@ TI_CoClassConstructor(this, iid = 0)
 	}
 	else
 	{
-		iid := GUID_FromString(iid, iid_mem)
+		hr := GUID_FromString(iid, iid_mem)
+		if (FAILED(hr))
+		{
+			throw Exception("GUID could not be converted.", -1, TI_FormatError(hr))
+		}
+		iid := &iid_mem
 	}
 
 	hr := DllCall(NumGet(NumGet(info+0), 16*A_PtrSize, "Ptr"), "Ptr", info, "Ptr", 0, "Ptr", iid, "Ptr*", instance, "Int") ; ITypeInfo::CreateInstance()
