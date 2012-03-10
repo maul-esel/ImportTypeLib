@@ -47,7 +47,7 @@ TI_CoClassConstructor(this, iid = 0)
 					}
 
 					VarSetCapacity(iid_mem, 16, 00)
-					CopyMemory(implAttr, &iid_mem, 16) ; TYPEATTR::guid
+					Mem_Copy(implAttr, &iid_mem, 16) ; TYPEATTR::guid
 					iid := &iid_mem
 
 					DllCall(NumGet(NumGet(info+0), 19*A_PtrSize, "Ptr"), "Ptr", implInfo, "Ptr", implAttr) ; ITypeInfo::ReleaseTypeAttr()
@@ -63,7 +63,7 @@ TI_CoClassConstructor(this, iid = 0)
 	}
 
 	VarSetCapacity(clsid, 16, 00)
-	CopyMemory(typeAttr, &clsid, 16) ; TYPEATTR::guid
+	Mem_Copy(typeAttr, &clsid, 16) ; TYPEATTR::guid
 
 	DllCall(NumGet(NumGet(info+0), 19*A_PtrSize, "Ptr"), "Ptr", info, "Ptr", typeAttr) ; ITypeInfo::ReleaseTypeAttr()
 
