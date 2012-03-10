@@ -3,7 +3,8 @@ class TI_StructureWrapper extends TI_Wrapper.TI_WrapperBaseClass
 	__New(typeInfo)
 	{
 		this.base.__New(typeInfo)
-		this["__New"] := Func("TI_StructureClassConstructor")
+		if (this != TI_Wrapper.TI_StructureWrapper)
+			this.Insert("__New", Func("TI_StructureClassConstructor"))
 	}
 }
 
