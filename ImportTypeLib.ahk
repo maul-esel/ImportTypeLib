@@ -1,23 +1,27 @@
 ImportTypeLib(lib, version = "1.0")
 {
-	if (TI_IsGUID(lib))
+	local verMajor, verMinor, libid, hr
+
+	if (GUID_IsGUIDString(lib))
 	{
 		if (!TI_GetVersion(version, verMajor, verMinor))
 		{
 			throw Exception("Invalid version specified: """ version """.", -1)
 		}
-		if (!(hr := TI_ConvertGUID(lib, libid)))
+
+		hr := GUID_FromString(lib, libid)
+		if (FAILED(hr))
 		{
-			throw Exception("LIBID could not be converted: """ libid """.", -1, TI_FormatError(hr))
+			throw Exception("LIBID could not be converted: """ lib """.", -1, TI_FormatError(hr))
 		}
 
-		hr := DllCall("OleAut32\LoadRegTypeLib", "Ptr", &libid, "UShort", verMajor, "UShort", verMinor, "Ptr*", lib, "Int")
+		hr := DllCall("OleAut32\LoadRegTypeLib", "Ptr", &libid, "UShort", verMajor, "UShort", verMinor, "Ptr*", lib, "Int") ; error handling is done below
 
 		VarSetCapacity(libid, 0)
 	}
 	else
 	{
-		hr := DllCall("OleAut32\LoadTypeLib", "Str", lib, "Ptr*", lib, "Int")
+		hr := DllCall("OleAut32\LoadTypeLib", "Str", lib, "Ptr*", lib, "Int") ; error handling is done below
 	}
 
 	if (FAILED(hr))

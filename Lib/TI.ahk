@@ -1,17 +1,6 @@
-TI_IsGUID(str)
-{
-	return RegExMatch(str, "^\{[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{12}\}$")
-}
-
 TI_GetVersion(string, byRef ver_major, byRef ver_minor)
 {
 	return RegExMatch(string, "^(?P<major>\d+)\.(?P<minor>\d+)$", ver_)
-}
-
-TI_ConvertGUID(str, byRef mem)
-{
-	VarSetCapacity(mem, 16, 00)
-	return DllCall("CLSIDFromString", "Str", str, "Ptr", &mem) >= 0x00
 }
 
 TI_FormatError(hr)

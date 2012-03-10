@@ -89,7 +89,7 @@ class TI_TypeLibWrapper
 			if (returnRaw)
 				result := guid
 			else
-				result := GUID2String(guid), Mem_Release(guid)
+				result := GUID_ToString(guid), Mem_Release(guid)
 
 			DllCall(NumGet(NumGet(lib+0), 12*A_PtrSize, "Ptr"), "Ptr", lib, "Ptr", attr) ; ITypeLib::ReleaseTLibAttr()
 		}
@@ -105,7 +105,7 @@ class TI_TypeLibWrapper
 			if (returnRaw)
 				result := guid
 			else
-				result := GUID2String(guid), Mem_Release(guid)
+				result := GUID_ToString(guid), Mem_Release(guid)
 
 			DllCall(NumGet(NumGet(info+0), 19*A_PtrSize, "Ptr"), "Ptr", info, "Ptr", attr, "Int") ; ITypeInfo::ReleaseTypeAttr()
 		}

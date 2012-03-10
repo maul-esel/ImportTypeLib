@@ -14,7 +14,7 @@ TI_CoClassConstructor(this, iid = 0)
 	{
 		if (this["internal://default-iid"])
 		{
-			iid := TI_ConvertGUID(this["internal://default-iid"], iid_mem)
+			iid := GUID_FromString(this["internal://default-iid"], iid_mem)
 		}
 		else
 		{
@@ -52,7 +52,7 @@ TI_CoClassConstructor(this, iid = 0)
 
 					DllCall(NumGet(NumGet(info+0), 19*A_PtrSize, "Ptr"), "Ptr", implInfo, "Ptr", implAttr) ; ITypeInfo::ReleaseTypeAttr()
 
-					this["internal://default-iid"] := GUID2String(iid)
+					this["internal://default-iid"] := GUID_ToString(iid)
 				}
 			}
 			DllCall(NumGet(NumGet(info+0), 19*A_PtrSize, "Ptr"), "Ptr", info, "Ptr", typeAttr) ; ITypeInfo::ReleaseTypeAttr()
@@ -60,7 +60,7 @@ TI_CoClassConstructor(this, iid = 0)
 	}
 	else
 	{
-		iid := TI_ConvertGUID(iid, iid_mem)
+		iid := GUID_FromString(iid, iid_mem)
 	}
 
 	hr := DllCall(NumGet(NumGet(info+0), 16*A_PtrSize, "Ptr"), "Ptr", info, "Ptr", 0, "Ptr", iid, "Ptr*", instance, "Int") ; ITypeInfo::CreateInstance()
