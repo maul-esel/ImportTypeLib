@@ -13,5 +13,16 @@ class TI_WrapperBaseClass
 		}
 
 		this["internal://typeinfo-name"] := StrGet(name, "UTF-16")
+		this["internal://data-storage"] := {}
+	}
+
+	__Set(property, value)
+	{
+		return this["internal://data-storage"][property] := value
+	}
+	__Get(property)
+	{
+		if (property != "base" && property != "internal://data-storage")
+			return this["internal://data-storage"][property]
 	}
 }
