@@ -1,4 +1,4 @@
-class TI_CoClassWrapper extends TI_Wrapper.TI_WrapperBaseClass
+class TI_CoClassWrapper extends TI_Wrapper.TI_ExecutableWrapperBaseClass
 {
 	__New(typeInfo)
 	{
