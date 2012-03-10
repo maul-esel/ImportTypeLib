@@ -11,9 +11,9 @@ class TI_TypeLibWrapper
 		this["internal://typelib-instance"] := lib
 		this["internal://typelib-name"] := this.GetName()
 
-		Loop % DllCall(NumGet(NumGet(lib+0), 03*A_PtrSize, "Ptr"), "Ptr", lib, "Int")
+		Loop % DllCall(NumGet(NumGet(lib+0), 03*A_PtrSize, "Ptr"), "Ptr", lib, "Int") ; ITypeLib::GetTypeInfoCount()
 		{
-			hr := DllCall(NumGet(NumGet(lib+0), 05*A_PtrSize, "Ptr"), "Ptr", lib, "UInt", A_Index - 1, "UInt*", typeKind, "Int")
+			hr := DllCall(NumGet(NumGet(lib+0), 05*A_PtrSize, "Ptr"), "Ptr", lib, "UInt", A_Index - 1, "UInt*", typeKind, "Int") ; ITypeLib::GetTypeKind()
 			if (FAILED(hr))
 			{
 				throw Exception("Type information kind no. " A_Index - 1 " could not be read.", -1, TI_FormatError(hr))
@@ -23,7 +23,7 @@ class TI_TypeLibWrapper
 				continue
 			}
 
-			hr := DllCall(NumGet(NumGet(lib+0), 04*A_PtrSize, "Ptr"), "Ptr", lib, "UInt", A_Index - 1, "Ptr*", typeInfo, "Int")
+			hr := DllCall(NumGet(NumGet(lib+0), 04*A_PtrSize, "Ptr"), "Ptr", lib, "UInt", A_Index - 1, "Ptr*", typeInfo, "Int") ; ITypeLib::GetTypeInfo()
 			if (FAILED(hr))
 			{
 				throw Exception("Type information no. " A_Index - 1 " could not be read.", -1, TI_FormatError(hr))
@@ -39,7 +39,7 @@ class TI_TypeLibWrapper
 		local hr, name, lib
 
 		lib := this["internal://typelib-instance"]
-		hr := DllCall(NumGet(NumGet(lib+0), 09*A_PtrSize, "Ptr"), "Ptr", lib, "UInt", index, "Ptr*", name, "Ptr*", 0, "UInt*", 0, "Ptr*", 0, "Int")
+		hr := DllCall(NumGet(NumGet(lib+0), 09*A_PtrSize, "Ptr"), "Ptr", lib, "UInt", index, "Ptr*", name, "Ptr*", 0, "UInt*", 0, "Ptr*", 0, "Int") ; ITypeLib::GetDocumentation()
 		if (FAILED(hr))
 		{
 			throw Exception("Name for the " (index == -1 ? "type library" : "type description no. " index) " could not be read.", -1, TI_FormatError(hr))
