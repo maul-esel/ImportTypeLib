@@ -34,7 +34,7 @@ class TI_TypeLibWrapper
 		}
 
 		if (this != TI_Wrapper.TI_TypeLibWrapper)
-			this.Insert("__New", Func("TI_AbstractClassConstructor"))
+			ObjInsert(this, "__New", Func("TI_AbstractClassConstructor"))
 	}
 
 	GetName(index = -1)
