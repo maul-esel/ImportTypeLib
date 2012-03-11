@@ -1,4 +1,4 @@
-﻿## ImportTypeLib
+## ImportTypeLib
 This project will allow calling COM object methods by name even on non-dispatch methods by using type information interfaces
 
 ### Example
