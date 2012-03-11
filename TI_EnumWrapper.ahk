@@ -2,13 +2,44 @@ class TI_EnumWrapper extends TI_Wrapper.TI_WrapperBaseClass
 {
 	__New(typeInfo)
 	{
-		this.base.__New(typeInfo)
-		if (this != TI_Wrapper.TI_EnumWrapper)
-			this.Insert("__New", Func("TI_AbstractClassConstructor"))
-	}
+		local attr := 0, varCount, varDesc := 0, varName := 0, varID, varValue, pVarName := 0, typeName
 
-	__Get(field)
-	{
-		; ...
+		Base.__New(typeInfo)
+		typeName := this["internal://typeinfo-name"]
+
+		hr := DllCall(NumGet(NumGet(typeInfo+0), 03*A_PtrSize, "Ptr"), "Ptr", typeInfo, "Ptr*", attr, "Int") ; ITypeInfo::GetTypeAttr()
+		if (FAILED(hr) || !attr)
+		{
+			throw Exception("TYPEATTR could not be read.", -1, TI_FormatError(hr))
+		}
+
+		varCount := NumGet(1*attr, 42+1*A_PtrSize, "UShort") ; TYPEATTR::cVars
+		Loop % varCount
+		{
+			hr := DllCall(NumGet(NumGet(typeInfo+0), 06*A_PtrSize, "Ptr"), "Ptr", typeInfo, "UInt", A_Index - 1, "Ptr*", varDesc, "Int") ; ITypeInfo::GetVarDesc()
+			if (FAILED(hr) || !varDesc)
+			{
+				throw Exception("VARDESC no. " A_Index - 1 " could not be read.", -1, TI_FormatError(hr))
+			}
+
+			varID := NumGet(1*varDesc, 00, "Int") ; VARDESC::memid
+			hr := DllCall(NumGet(NumGet(typeInfo+0), 12*A_PtrSize, "Ptr"), "Ptr", typeInfo, "Int", varID, "Ptr*", pVarName, "Ptr", 0, "UInt", 0, "Ptr", 0, "Int") ; ITypeInfo::GetDocumentation()
+			if (FAILED(hr) || !pVarName)
+			{
+				throw Exception("GetDocumentation() failed.", -1, TI_FormatError(hr))
+			}
+			varValue := NumGet(NumGet(1 * varDesc, 04 + A_PtrSize, "Ptr"), 08, "Int") ; VARDESC::lpvarValue::lVal
+
+			varName := StrGet(pVarName, "UTF-16")
+			if (InStr(varName, typeName . "_", true) == 1)
+				varName := SubStr(varName, StrLen(typeName) + 2, StrLen(varName) - StrLen(typeName))
+			;MsgBox % typeName "::" varName " = " varValue
+
+			this[varName] := varValue
+			varName := 0
+		}
+
+		if (this != TI_Wrapper.TI_EnumWrapper)
+			ObjInsert(this, "__New", Func("TI_AbstractClassConstructor"))
 	}
 }
