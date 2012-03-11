@@ -7,7 +7,7 @@ class TI_ExecutableWrapperBaseClass extends TI_Wrapper.TI_WrapperBaseClass
 		, DISPID_UNKNOWN := -1
 		, sizeof_DISPPARAMS := 8 + 2 * A_PtrSize, sizeof_EXCEPINFO := 12 + 5 * A_PtrSize, sizeof_VARIANT := 16
 		, DISP_E_MEMBERNOTFOUND := -2147352573, DISP_E_UNKNOWNNAME := -2147352570
-		local paramCount, dispparams, rgvarg := 0, hr, fn, info, dispid := DISPID_UNKNOWN, instance, excepInfo, err_index, result
+		local paramCount, dispparams, rgvarg := 0, hr, fn, info, dispid := DISPID_UNKNOWN, instance, excepInfo, err_index, result, variant
 
 		paramCount := params.maxIndex() > 0 ? params.maxIndex() : 0
 
@@ -25,7 +25,8 @@ class TI_ExecutableWrapperBaseClass extends TI_Wrapper.TI_WrapperBaseClass
 				throw Exception("Out of memory.", -1)
 			Loop % paramCount
 			{
-				Mem_Copy(CreateVARIANT(params[A_Index]), &rgvarg + (A_Index - 1) * sizeof_VARIANT, sizeof_VARIANT)
+				VARIANT_Create(params[A_Index], variant)
+				, Mem_Copy(&variant, &rgvarg + (A_Index - 1) * sizeof_VARIANT, sizeof_VARIANT)
 			}
 			NumPut(&rgvarg, dispparams, 00, "Ptr") ; DISPPARAMS::rgvarg
 			NumPut(paramCount, dispparams, 2 * A_PtrSize, "UInt") ; DISPPARAMS::cArgs
@@ -37,6 +38,7 @@ class TI_ExecutableWrapperBaseClass extends TI_Wrapper.TI_WrapperBaseClass
 		hr := DllCall(NumGet(NumGet(info+0), 10*A_PtrSize, "Ptr"), "Ptr", info, "Str*", method, "UInt", 1, "UInt*", dispid, "Int") ; ITypeInfo::GetIDsOfNames()
 		if (FAILED(hr) || dispid == DISPID_UNKNOWN)
 		{
+			/*
 			if (hr == DISP_E_UNKNOWNNAME)
 			{
 				if (IsFunc(fn := "Obj" . LTrim(method, "_"))) ; if member not found: check for internal method
@@ -44,12 +46,14 @@ class TI_ExecutableWrapperBaseClass extends TI_Wrapper.TI_WrapperBaseClass
 					return %fn%(this, params*)
 				}
 			}
+			*/
 			throw Exception("GetIDsOfNames for """ method """ failed.", -1, TI_FormatError(hr))
 		}
 
 		hr := DllCall(NumGet(NumGet(info+0), 11*A_PtrSize, "Ptr"), "Ptr", info, "Ptr", instance, "UInt", dispid, "UShort", DISPATCH_METHOD, "Ptr", &dispparams, "Ptr", &result, "Ptr", &excepInfo, "Ptr", 0, "Int") ; ITypeInfo::Invoke()
 		if (FAILED(hr))
 		{
+			/*
 			MsgBox % "hr: " hr
 			if (hr == DISP_E_MEMBERNOTFOUND)
 			{
@@ -62,10 +66,12 @@ class TI_ExecutableWrapperBaseClass extends TI_Wrapper.TI_WrapperBaseClass
 					return %fn%(this, params*)
 				}
 			}
+			*/
 			ListVars
 			throw Exception("""" method """ could not be called.", -1, TI_FormatError(hr))
 		}
-		return ComObjValue(result)
+		MsgBox % "vt: " NumGet(&result, 00, "UShort")
+		return VARIANT_GetValue(&result)
 	}
 
 	__Get(property)
@@ -101,7 +107,8 @@ class TI_ExecutableWrapperBaseClass extends TI_Wrapper.TI_WrapperBaseClass
 				ListVars
 				throw Exception("""" property """ could not be retrieved.", -1, TI_FormatError(hr))
 			}
-			return ComObjValue(result)
+			MsgBox % "vt: " NumGet(&result, 00, "UShort")
+			return VARIANT_GetValue(&result)
 		}
 	}
 
@@ -113,7 +120,7 @@ class TI_ExecutableWrapperBaseClass extends TI_Wrapper.TI_WrapperBaseClass
 		, sizeof_DISPPARAMS := 8 + 2 * A_PtrSize, sizeof_EXCEPINFO := 12 + 5 * A_PtrSize
 		, VT_UNKNOWN := 13, VT_DISPATCH := 9
 		, DISP_E_MEMBERNOTFOUND := -2147352573
-		local variant, dispparams, hr, info, dispid := DISPID_UNKNOWN, vt, instance, excepInfo, err_index
+		local variant, dispparams, hr, info, dispid := DISPID_UNKNOWN, vt, instance, excepInfo, err_index, variant
 
 		if (property != "base" && !RegExMatch(property, "^internal://")) ; ignore base and internal properties (handled by TI_WrapperBaseClass)
 		{
@@ -123,8 +130,8 @@ class TI_ExecutableWrapperBaseClass extends TI_Wrapper.TI_WrapperBaseClass
 			if (VarSetCapacity(excepInfo, sizeof_EXCEPINFO, 00) != sizeof_EXCEPINFO)
 				throw Exception("Out of memory.", -1)
 
-			variant := CreateVARIANT(value)
-			NumPut(variant, dispparams, 00, "Ptr") ; DISPPARAMS::rgvarg
+			VARIANT_Create(value, variant)
+			NumPut(&variant, dispparams, 00, "Ptr") ; DISPPARAMS::rgvarg
 			NumPut(1, dispparams, 2 * A_PtrSize, "UInt") ; DISPPARAMS::cArgs
 
 			NumPut(&DISPID_PROPERTYPUT, dispparams, A_PtrSize, "Ptr") ; DISPPARAMS::rgdispidNamedArgs
@@ -146,7 +153,9 @@ class TI_ExecutableWrapperBaseClass extends TI_Wrapper.TI_WrapperBaseClass
 				if (SUCCEEDED(hr))
 					return value
 				else if (hr != DISP_E_MEMBERNOTFOUND) ; if member not found, retry below with DISPATCH_PROPERTYPUT
+				{
 					throw Exception("""" property """ could not be set.", -1, TI_FormatError(hr)) ; otherwise an error occured
+				}
 			}
 
 			hr := DllCall(NumGet(NumGet(info+0), 11*A_PtrSize, "Ptr"), "Ptr", info, "Ptr", instance, "UInt", dispid, "UShort", DISPATCH_PROPERTYPUT, "Ptr", &dispparams, "Ptr*", 0, "Ptr", &excepInfo, "UInt*", err_index, "Int") ; ITypeInfo::Invoke()
