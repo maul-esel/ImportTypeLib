@@ -1,4 +1,4 @@
 SUCCEEDED(hr)
 {
-	return hr >= 0x00
+	return hr != "" && hr >= 0x00
 }

@@ -1,4 +1,4 @@
 FAILED(hr)
 {
-	return hr < 0
+	return hr == "" || hr < 0
 }
