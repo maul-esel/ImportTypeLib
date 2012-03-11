@@ -3,7 +3,7 @@ class TI_TypeLibWrapper
 	__New(lib)
 	{
 		static valid_typekinds
-		local typeKind, hr, typename, obj
+		local typeKind, hr, typename, obj, typeInfo
 
 		if (!IsObject(valid_typekinds)) ; init static field
 			 valid_typekinds := { 0 : TI_Wrapper.TI_EnumWrapper, 1 : TI_Wrapper.TI_StructureWrapper, 5 : TI_Wrapper.TI_CoClassWrapper }
