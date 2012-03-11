@@ -1,7 +1,7 @@
 CreateVariant(value)
 {
 	static VT_VARIANT := 0xC, VT_BYREF := 0x4000, VT_UNKNOWN := 0xD
-	local array, arr_data, variant, err
+	local array, arr_data := 0, variant
 
 	array := ComObjArray(VT_VARIANT, 1)
 	array[0] := value
