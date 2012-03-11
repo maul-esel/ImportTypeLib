@@ -14,12 +14,11 @@
 
 VARIANT_GetValue(variant)
 {
-	static VT_VARIANT := 0xC
-	local arr_data := 0, array := ComObjArray(VT_VARIANT, 1)
+	static VT_VARIANT := 0xC, VT_UNKNOWN := 0xD
+	local arr_data := 0, array := ComObjArray(VT_VARIANT, 1), vt := 0
 
-	DllCall("oleaut32\SafeArrayAccessData", "Ptr", ComObjValue(array), "Ptr*", arr_data)
-	, Mem_Copy(variant, arr_data, 16)
-	, DllCall("oleaut32\SafeArrayUnaccessData", "Ptr", ComObjValue(array))
+	vt := NumGet(1*variant, 00, "UShort")
+	array[0] := ComObjParameter(vt, NumGet(1*variant, 08, "Ptr"))
 
-	return array[0]
+	return vt == VT_UNKNOWN ? NumGet(1*variant, 08, "Ptr") : array[0]
 }
