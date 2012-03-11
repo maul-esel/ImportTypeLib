@@ -1,14 +1,14 @@
 GUID_ToString(guid)
 {
 	local string := 0
-	DllCall("Ole32.dll\StringFromCLSID", "Ptr", guid, "Ptr*", string)
+	DllCall("Ole32\StringFromCLSID", "Ptr", guid, "Ptr*", string)
 	return StrGet(string, "UTF-16")
 }
 
 GUID_FromString(str, byRef mem)
 {
 	VarSetCapacity(mem, 16, 00)
-	return DllCall("CLSIDFromString", "Str", str, "Ptr", &mem)
+	return DllCall("Ole32\CLSIDFromString", "Str", str, "Ptr", &mem)
 }
 
 GUID_IsGUIDString(str)
