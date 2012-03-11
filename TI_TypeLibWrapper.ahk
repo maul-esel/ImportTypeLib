@@ -2,8 +2,8 @@ class TI_TypeLibWrapper
 {
 	__New(lib)
 	{
-		static valid_typekinds
-		local typeKind, hr, typename, obj, typeInfo
+		static valid_typekinds := 0
+		local typeKind := -1, hr, typename, obj, typeInfo := 0
 
 		if (!IsObject(valid_typekinds)) ; init static field
 			 valid_typekinds := { 0 : TI_Wrapper.TI_EnumWrapper, 1 : TI_Wrapper.TI_StructureWrapper, 5 : TI_Wrapper.TI_CoClassWrapper }
@@ -39,7 +39,7 @@ class TI_TypeLibWrapper
 
 	GetName(index = -1)
 	{
-		local hr, name, lib
+		local hr, name := 0, lib
 
 		lib := this["internal://typelib-instance"]
 		hr := DllCall(NumGet(NumGet(lib+0), 09*A_PtrSize, "Ptr"), "Ptr", lib, "UInt", index, "Ptr*", name, "Ptr*", 0, "UInt*", 0, "Ptr*", 0, "Int") ; ITypeLib::GetDocumentation()

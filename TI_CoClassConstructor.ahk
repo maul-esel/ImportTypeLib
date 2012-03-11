@@ -1,6 +1,6 @@
 TI_CoClassConstructor(this, iid = 0)
 {
-	local instance, typeAttr, info, hr, iid_mem, implCount, implFlags, implHref, implInfo, implAttr
+	local instance := 0, typeAttr := 0, info, hr, iid_mem, implCount, implFlags := 0, implHref := 0, implInfo := 0, implAttr := 0
 	static IMPLTYPEFLAG_FDEFAULT := 1
 
 	info := this["internal://typeinfo-instance"]

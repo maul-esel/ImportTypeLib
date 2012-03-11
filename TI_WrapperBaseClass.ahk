@@ -2,7 +2,7 @@ class TI_WrapperBaseClass
 {
 	__New(typeInfo)
 	{
-		local hr, name
+		local hr, name := 0
 
 		this["internal://typeinfo-instance"] := typeInfo
 

@@ -1,6 +1,6 @@
 GUID_ToString(guid)
 {
-	local string
+	local string := 0
 	DllCall("Ole32.dll\StringFromCLSID", "Ptr", guid, "Ptr*", string)
 	return StrGet(string, "UTF-16")
 }
