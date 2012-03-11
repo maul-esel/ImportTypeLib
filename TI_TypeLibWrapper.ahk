@@ -8,33 +8,34 @@ class TI_TypeLibWrapper
 		if (!IsObject(valid_typekinds)) ; init static field
 			 valid_typekinds := { 0 : TI_Wrapper.TI_EnumWrapper, 1 : TI_Wrapper.TI_StructureWrapper, 5 : TI_Wrapper.TI_CoClassWrapper, 3 : TI_Wrapper.TI_InterfaceWrapper }
 
-		this["internal://typelib-instance"] := lib
-		this["internal://typelib-name"] := this.GetName()
-
-		Loop % DllCall(NumGet(NumGet(lib+0), 03*A_PtrSize, "Ptr"), "Ptr", lib, "Int") ; ITypeLib::GetTypeInfoCount()
-		{
-			hr := DllCall(NumGet(NumGet(lib+0), 05*A_PtrSize, "Ptr"), "Ptr", lib, "UInt", A_Index - 1, "UInt*", typeKind, "Int") ; ITypeLib::GetTypeKind()
-			if (FAILED(hr))
-			{
-				throw Exception("Type information kind no. " A_Index - 1 " could not be read.", -1, TI_FormatError(hr))
-			}
-			if (!valid_typekinds.HasKey(typeKind))
-			{
-				continue
-			}
-
-			hr := DllCall(NumGet(NumGet(lib+0), 04*A_PtrSize, "Ptr"), "Ptr", lib, "UInt", A_Index - 1, "Ptr*", typeInfo, "Int") ; ITypeLib::GetTypeInfo()
-			if (FAILED(hr))
-			{
-				throw Exception("Type information no. " A_Index - 1 " could not be read.", -1, TI_FormatError(hr))
-			}
-
-			typename := this.GetName(A_Index - 1), obj := valid_typekinds[typeKind]
-			this[typename] := new obj(typeInfo)
-		}
-
 		if (this != TI_Wrapper.TI_TypeLibWrapper)
+		{
 			ObjInsert(this, "__New", Func("TI_AbstractClassConstructor"))
+			this["internal://typelib-instance"] := lib
+			this["internal://typelib-name"] := this.GetName()
+
+			Loop % DllCall(NumGet(NumGet(lib+0), 03*A_PtrSize, "Ptr"), "Ptr", lib, "Int") ; ITypeLib::GetTypeInfoCount()
+			{
+				hr := DllCall(NumGet(NumGet(lib+0), 05*A_PtrSize, "Ptr"), "Ptr", lib, "UInt", A_Index - 1, "UInt*", typeKind, "Int") ; ITypeLib::GetTypeKind()
+				if (FAILED(hr))
+				{
+					throw Exception("Type information kind no. " A_Index - 1 " could not be read.", -1, TI_FormatError(hr))
+				}
+				if (!valid_typekinds.HasKey(typeKind))
+				{
+					continue
+				}
+
+				hr := DllCall(NumGet(NumGet(lib+0), 04*A_PtrSize, "Ptr"), "Ptr", lib, "UInt", A_Index - 1, "Ptr*", typeInfo, "Int") ; ITypeLib::GetTypeInfo()
+				if (FAILED(hr))
+				{
+					throw Exception("Type information no. " A_Index - 1 " could not be read.", -1, TI_FormatError(hr))
+				}
+
+				typename := this.GetName(A_Index - 1), obj := valid_typekinds[typeKind]
+				this[typename] := new obj(typeInfo, this)
+			}
+		}
 	}
 
 	GetName(index = -1)
