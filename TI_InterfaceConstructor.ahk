@@ -1,4 +1,4 @@
-TI_InterfaceConstructor(instance)
+TI_InterfaceConstructor(this, instance)
 {
 	if (!instance)
 	{
