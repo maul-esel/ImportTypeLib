@@ -53,7 +53,11 @@ class TI_ExecutableWrapperBaseClass extends TI_Wrapper.TI_WrapperBaseClass
 			MsgBox % "hr: " hr
 			if (hr == DISP_E_MEMBERNOTFOUND)
 			{
-				if (IsFunc(fn := "Obj" . LTrim(method, "_"))) ; if member not found: check for internal method
+				; If member not found: check for internal method
+				; A 2nd check is needed here because a class / interface could have a property with the same name as an AHK object function.
+				; In that case, GetIDsOfNames() would do well, but it would fail here.
+				; In all other cases, i.e. where the class / interface does not have such a property, GetIDsOfNames would fail - thus a check is needed there, too.
+				if (IsFunc(fn := "Obj" . LTrim(method, "_")))
 				{
 					return %fn%(this, params*)
 				}
