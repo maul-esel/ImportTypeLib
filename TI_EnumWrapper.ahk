@@ -2,7 +2,7 @@ class TI_EnumWrapper extends TI_Wrapper.TI_WrapperBaseClass
 {
 	__New(typeInfo, lib)
 	{
-		local hr, attr := 0, varCount, varDesc := 0, varName := 0, varID, varValue, pVarName := 0, typeName
+		local hr, attr := 0, varCount, varDesc := 0, varName := 0, varID, varValue, pVarName := 0, typeName, Base
 
 		if (this != TI_Wrapper.TI_EnumWrapper)
 		{

@@ -2,7 +2,7 @@ class TI_CoClassWrapper extends TI_Wrapper.TI_WrapperBaseClass
 {
 	__New(typeInfo, lib)
 	{
-		local hr, typeAttr, implCount, implFlags := 0, implHref := 0, implInfo := 0, implAttr := 0, iid
+		local hr, typeAttr := 0, implCount, implFlags := 0, implHref := 0, implInfo := 0, implAttr := 0, iid, Base
 		static IMPLTYPEFLAG_FDEFAULT := 1
 
 		if (this != TI_Wrapper.TI_CoClassWrapper)

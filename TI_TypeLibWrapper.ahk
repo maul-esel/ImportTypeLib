@@ -54,7 +54,7 @@ class TI_TypeLibWrapper
 
 	GetGUID(obj = -1, returnRaw = false, passRaw = false)
 	{
-		local hr, guid, lib, info, attr, result
+		local hr, guid, lib, info, attr := 0, result
 
 		lib := this["internal://typelib-instance"]
 		if obj is not integer
