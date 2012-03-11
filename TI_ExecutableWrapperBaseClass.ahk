@@ -72,11 +72,8 @@ class TI_ExecutableWrapperBaseClass extends TI_Wrapper.TI_WrapperBaseClass
 		, sizeof_DISPPARAMS := 8 + 2 * A_PtrSize, sizeof_EXCEPINFO := 12 + 5 * A_PtrSize, sizeof_VARIANT := 16
 		local dispparams, hr, info, dispid := DISPID_UNKNOWN, instance, excepInfo, err_index, result
 
-		if (property != "base" && property != "internal://data-storage")
+		if (property != "base" && !RegExMatch(property, "^internal://")) ; ignore base and internal properties (handled by TI_WrapperBaseClass)
 		{
-			if (RegExMatch(property, "^internal://")) ;handle internal properties
-				return this["internal://data-storage"][property]
-
 			; init structures
 			if (VarSetCapacity(dispparams, sizeof_DISPPARAMS, 00) != sizeof_DISPPARAMS)
 				throw Exception("Out of memory.", -1)
@@ -114,46 +111,46 @@ class TI_ExecutableWrapperBaseClass extends TI_Wrapper.TI_WrapperBaseClass
 		, DISP_E_MEMBERNOTFOUND := -2147352573
 		local variant, dispparams, hr, info, dispid := DISPID_UNKNOWN, vt, instance, excepInfo, err_index
 
-		if (RegExMatch(property, "^internal:\/\/")) ; handle internal properties
-			return this["internal://data-storage"][property] := value
-
-		; init structures
-		if (VarSetCapacity(dispparams, sizeof_DISPPARAMS, 00) != sizeof_DISPPARAMS)
-			throw Exception("Out of memory.", -1)
-		if (VarSetCapacity(excepInfo, sizeof_EXCEPINFO, 00) != sizeof_EXCEPINFO)
-			throw Exception("Out of memory.", -1)
-
-		variant := CreateVARIANT(value)
-		NumPut(variant, dispparams, 00, "Ptr") ; DISPPARAMS::rgvarg
-		NumPut(1, dispparams, 2 * A_PtrSize, "UInt") ; DISPPARAMS::cArgs
-
-		NumPut(&DISPID_PROPERTYPUT, dispparams, A_PtrSize, "Ptr") ; DISPPARAMS::rgdispidNamedArgs
-		NumPut(1, dispparams, 2 * A_PtrSize + 4, "UInt") ; DISPPARAMS::cNamedArgs
-
-		info := this["internal://typeinfo-instance"]
-		instance := this["internal://type-instance"]
-
-		hr := DllCall(NumGet(NumGet(info+0), 10*A_PtrSize, "Ptr"), "Ptr", info, "Str*", property, "UInt", 1, "UInt*", dispid, "Int") ; ITypeInfo::GetIDsOfNames()
-		if (FAILED(hr) || dispid == DISPID_UNKNOWN)
+		if (property != "base" && !RegExMatch(property, "^internal://")) ; ignore base and internal properties (handled by TI_WrapperBaseClass)
 		{
-			throw Exception("GetIDsOfNames failed.", -1, TI_FormatError(hr))
-		}
+			; init structures
+			if (VarSetCapacity(dispparams, sizeof_DISPPARAMS, 00) != sizeof_DISPPARAMS)
+				throw Exception("Out of memory.", -1)
+			if (VarSetCapacity(excepInfo, sizeof_EXCEPINFO, 00) != sizeof_EXCEPINFO)
+				throw Exception("Out of memory.", -1)
 
-		vt := NumGet(1*variant, 00, "UShort")
-		if (vt == VT_DISPATCH || vt == VT_UNKNOWN)
-		{
-			hr := DllCall(NumGet(NumGet(info+0), 11*A_PtrSize, "Ptr"), "Ptr", info, "Ptr", instance, "UInt", dispid, "UShort", DISPATCH_PROPERTYPUTREF, "Ptr", &dispparams, "Ptr*", 0, "Ptr", &excepInfo, "UInt*", err_index, "Int") ; ITypeInfo::Invoke()
-			if (SUCCEEDED(hr))
-				return value
-			else if (hr != DISP_E_MEMBERNOTFOUND) ; if member not found, retry below with DISPATCH_PROPERTYPUT
-				throw Exception("""" property """ could not be set.", -1, TI_FormatError(hr)) ; otherwise an error occured
-		}
+			variant := CreateVARIANT(value)
+			NumPut(variant, dispparams, 00, "Ptr") ; DISPPARAMS::rgvarg
+			NumPut(1, dispparams, 2 * A_PtrSize, "UInt") ; DISPPARAMS::cArgs
 
-		hr := DllCall(NumGet(NumGet(info+0), 11*A_PtrSize, "Ptr"), "Ptr", info, "Ptr", instance, "UInt", dispid, "UShort", DISPATCH_PROPERTYPUT, "Ptr", &dispparams, "Ptr*", 0, "Ptr", &excepInfo, "UInt*", err_index, "Int") ; ITypeInfo::Invoke()
-		if (FAILED(hr))
-		{
-			throw Exception("""" property """ could not be set.", -1, TI_FormatError(hr))
+			NumPut(&DISPID_PROPERTYPUT, dispparams, A_PtrSize, "Ptr") ; DISPPARAMS::rgdispidNamedArgs
+			NumPut(1, dispparams, 2 * A_PtrSize + 4, "UInt") ; DISPPARAMS::cNamedArgs
+
+			info := this["internal://typeinfo-instance"]
+			instance := this["internal://type-instance"]
+
+			hr := DllCall(NumGet(NumGet(info+0), 10*A_PtrSize, "Ptr"), "Ptr", info, "Str*", property, "UInt", 1, "UInt*", dispid, "Int") ; ITypeInfo::GetIDsOfNames()
+			if (FAILED(hr) || dispid == DISPID_UNKNOWN)
+			{
+				throw Exception("GetIDsOfNames failed.", -1, TI_FormatError(hr))
+			}
+
+			vt := NumGet(1*variant, 00, "UShort")
+			if (vt == VT_DISPATCH || vt == VT_UNKNOWN)
+			{
+				hr := DllCall(NumGet(NumGet(info+0), 11*A_PtrSize, "Ptr"), "Ptr", info, "Ptr", instance, "UInt", dispid, "UShort", DISPATCH_PROPERTYPUTREF, "Ptr", &dispparams, "Ptr*", 0, "Ptr", &excepInfo, "UInt*", err_index, "Int") ; ITypeInfo::Invoke()
+				if (SUCCEEDED(hr))
+					return value
+				else if (hr != DISP_E_MEMBERNOTFOUND) ; if member not found, retry below with DISPATCH_PROPERTYPUT
+					throw Exception("""" property """ could not be set.", -1, TI_FormatError(hr)) ; otherwise an error occured
+			}
+
+			hr := DllCall(NumGet(NumGet(info+0), 11*A_PtrSize, "Ptr"), "Ptr", info, "Ptr", instance, "UInt", dispid, "UShort", DISPATCH_PROPERTYPUT, "Ptr", &dispparams, "Ptr*", 0, "Ptr", &excepInfo, "UInt*", err_index, "Int") ; ITypeInfo::Invoke()
+			if (FAILED(hr))
+			{
+				throw Exception("""" property """ could not be set.", -1, TI_FormatError(hr))
+			}
+			return value
 		}
-		return value
 	}
 }
