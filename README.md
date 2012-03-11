@@ -6,7 +6,7 @@ Sounds complicated? Here is how it will look:
 
 ```ahk
 UIAutomation := ImportTypeLib(A_WinDir "\System32\UIAutomationCore.dll")
-automation := new UIAutomationCore.CUIAutomation()
+automation := new UIAutomation.CUIAutomation()
 
 MsgBox % "Retrieved condition: " automation.ControlViewCondition
 automation.RemoveAllEventHandlers()
