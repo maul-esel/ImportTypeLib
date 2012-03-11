@@ -4,7 +4,7 @@ class TI_WrapperBaseClass
 	{
 		local hr, name := 0
 
-		if (this != TI_WrapperBaseClass)
+		if (this != TI_Wrapper.TI_WrapperBaseClass)
 		{
 			ObjInsert(this, "internal://data-storage", {})
 			this["internal://typelib-object"] := lib, ObjAddRef(lib)
