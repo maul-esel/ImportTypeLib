@@ -6,7 +6,7 @@ class TI_TypeLibWrapper
 		local typeKind := -1, hr, typename, obj, typeInfo := 0
 
 		if (!IsObject(valid_typekinds)) ; init static field
-			 valid_typekinds := { 0 : TI_Wrapper.TI_EnumWrapper, 1 : TI_Wrapper.TI_StructureWrapper, 5 : TI_Wrapper.TI_CoClassWrapper }
+			 valid_typekinds := { 0 : TI_Wrapper.TI_EnumWrapper, 1 : TI_Wrapper.TI_StructureWrapper, 5 : TI_Wrapper.TI_CoClassWrapper, 3 : TI_Wrapper.TI_InterfaceWrapper }
 
 		this["internal://typelib-instance"] := lib
 		this["internal://typelib-name"] := this.GetName()
