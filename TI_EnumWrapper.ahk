@@ -3,6 +3,7 @@ class TI_EnumWrapper extends TI_Wrapper.TI_WrapperBaseClass
 	__New(typeInfo, lib)
 	{
 		local hr, attr := 0, varCount, varDesc := 0, varName := 0, varID, varValue, pVarName := 0, typeName, Base
+		static VARKIND_CONST := 2
 
 		if (this != TI_Wrapper.TI_EnumWrapper)
 		{
@@ -32,11 +33,18 @@ class TI_EnumWrapper extends TI_Wrapper.TI_WrapperBaseClass
 				{
 					throw Exception("GetDocumentation() failed.", -1, TI_FormatError(hr))
 				}
-				varValue := NumGet(NumGet(1 * varDesc, 04 + A_PtrSize, "Ptr"), 08, "Int") ; VARDESC::lpvarValue::lVal
 
 				varName := StrGet(pVarName, "UTF-16")
 				if (InStr(varName, typeName . "_", true) == 1)
 					varName := SubStr(varName, StrLen(typeName) + 2, StrLen(varName) - StrLen(typeName))
+
+				if (NumGet(1*varDesc, 08 + 6 * A_PtrSize, "UShort") != VARKIND_CONST) ; VARDESC::varkind
+				{
+					throw Exception("Cannot wrap non-constant enumeration member """ typeName "::" varName """!", -1)
+				}
+
+				varValue := VARIANT_GetValue(NumGet(1 * varDesc, 04 + A_PtrSize, "Ptr")) ;, 08, "Int") ; VARDESC::lpvarValue::lVal
+
 				this[varName] := varValue
 
 				DllCall(NumGet(NumGet(typeInfo+0), 21*A_PtrSize, "Ptr"), "Ptr", typeInfo, "Ptr", varDesc) ; ITypeInfo::ReleaseVarDesc()
