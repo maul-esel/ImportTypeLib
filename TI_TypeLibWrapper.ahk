@@ -19,7 +19,7 @@ class TI_TypeLibWrapper
 				hr := DllCall(NumGet(NumGet(lib+0), 05*A_PtrSize, "Ptr"), "Ptr", lib, "UInt", A_Index - 1, "UInt*", typeKind, "Int") ; ITypeLib::GetTypeKind()
 				if (FAILED(hr))
 				{
-					throw Exception("Type information kind no. " A_Index - 1 " could not be read.", -1, TI_FormatError(hr))
+					throw Exception("Type information kind no. " A_Index - 1 " could not be read.", -1, FormatError(hr))
 				}
 				if (!valid_typekinds.HasKey(typeKind))
 				{
@@ -29,7 +29,7 @@ class TI_TypeLibWrapper
 				hr := DllCall(NumGet(NumGet(lib+0), 04*A_PtrSize, "Ptr"), "Ptr", lib, "UInt", A_Index - 1, "Ptr*", typeInfo, "Int") ; ITypeLib::GetTypeInfo()
 				if (FAILED(hr))
 				{
-					throw Exception("Type information no. " A_Index - 1 " could not be read.", -1, TI_FormatError(hr))
+					throw Exception("Type information no. " A_Index - 1 " could not be read.", -1, FormatError(hr))
 				}
 
 				typename := this.GetName(A_Index - 1), obj := valid_typekinds[typeKind]
@@ -46,7 +46,7 @@ class TI_TypeLibWrapper
 		hr := DllCall(NumGet(NumGet(lib+0), 09*A_PtrSize, "Ptr"), "Ptr", lib, "UInt", index, "Ptr*", name, "Ptr*", 0, "UInt*", 0, "Ptr*", 0, "Int") ; ITypeLib::GetDocumentation()
 		if (FAILED(hr))
 		{
-			throw Exception("Name for the " (index == -1 ? "type library" : "type description no. " index) " could not be read.", -1, TI_FormatError(hr))
+			throw Exception("Name for the " (index == -1 ? "type library" : "type description no. " index) " could not be read.", -1, FormatError(hr))
 		}
 
 		return StrGet(name, "UTF-16")
@@ -76,7 +76,7 @@ class TI_TypeLibWrapper
 				hr := DllCall(NumGet(NumGet(lib+0), 04*A_PtrSize, "Ptr"), "Ptr", lib, "UInt", obj, "Ptr*", info, "Int") ; ITypeLib::GetTypeInfo()
 				if (FAILED(hr) || !info)
 				{
-					throw Exception("Type information could not be read.", -1, TI_FormatError(hr))
+					throw Exception("Type information could not be read.", -1, FormatError(hr))
 				}
 			}
 		}
@@ -86,7 +86,7 @@ class TI_TypeLibWrapper
 			hr := DllCall(NumGet(NumGet(lib+0), 07*A_PtrSize, "Ptr"), "Ptr", lib, "Ptr*", attr, "Int") ; ITypeLib::GetLibAttr()
 			if (FAILED(hr) || !attr)
 			{
-				throw Exception("TLIBATTR could not be read.", -1, TI_FormatError(hr))
+				throw Exception("TLIBATTR could not be read.", -1, FormatError(hr))
 			}
 
 			guid := Mem_Allocate(16), Mem_Copy(attr, guid, 16) ; TLIBATTR::guid
@@ -102,7 +102,7 @@ class TI_TypeLibWrapper
 			hr := DllCall(NumGet(NumGet(info+0), 03*A_PtrSize, "Ptr"), "Ptr", info, "Ptr*", attr, "Int") ; ITypeInfo::GetTypeAttr()
 			if (FAILED(hr) || !attr)
 			{
-				throw Exception("TYPEATTR could not be read.", -1, TI_FormatError(hr))
+				throw Exception("TYPEATTR could not be read.", -1, FormatError(hr))
 			}
 
 			guid := Mem_Allocate(16), Mem_Copy(attr, guid, 16) ; TYPEATTR::guid

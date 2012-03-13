@@ -33,20 +33,20 @@ class TI_EnumWrapper extends TI_Wrapper.TI_WrapperBaseClass
 				}
 				if (FAILED(hr) || varID == DISPID_UNKNOWN) ; recheck as the above "if" might have changed it
 				{
-					throw Exception("GetIDsOfNames for """ field """ failed.", -1, TI_FormatError(hr))
+					throw Exception("GetIDsOfNames for """ field """ failed.", -1, FormatError(hr))
 				}
 			}
 
 			hr := DllCall(NumGet(NumGet(info+0), 25*A_PtrSize, "Ptr"), "Ptr", info, "UInt", varID, "UInt*", index, "Int") ; ITypeInfo2::GetVarIndexOfMemId()
 			if (FAILED(hr) || index < 0)
 			{
-				throw Exception("GetVarIndexOfMemId for """ field """ failed.", -1, TI_FormatError(hr))
+				throw Exception("GetVarIndexOfMemId for """ field """ failed.", -1, FormatError(hr))
 			}
 
 			hr := DllCall(NumGet(NumGet(info+0), 06*A_PtrSize, "Ptr"), "Ptr", info, "UInt", index, "Ptr*", varDesc, "Int") ; ITypeInfo::GetVarDesc()
 			if (FAILED(hr) || !varDesc)
 			{
-				throw Exception("VARDESC for """ field """ could not be read.", -1, TI_FormatError(hr))
+				throw Exception("VARDESC for """ field """ could not be read.", -1, FormatError(hr))
 			}
 
 			if (NumGet(1*varDesc, 08 + 6 * A_PtrSize, "UShort") != VARKIND_CONST) ; VARDESC::varkind
@@ -83,7 +83,7 @@ class TI_EnumWrapper extends TI_Wrapper.TI_WrapperBaseClass
 			hr := DllCall(NumGet(NumGet(info+0), 03*A_PtrSize, "Ptr"), "Ptr", info, "Ptr*", attr, "Int") ; ITypeInfo::GetTypeAttr()
 			if (FAILED(hr) || !attr)
 			{
-				throw Exception("TYPEATTR could not be read.", -1, TI_FormatError(hr))
+				throw Exception("TYPEATTR could not be read.", -1, FormatError(hr))
 			}
 			varCount := NumGet(1*attr, 42+1*A_PtrSize, "UShort") ; TYPEATTR::cVars
 			DllCall(NumGet(NumGet(info+0), 19*A_PtrSize, "Ptr"), "Ptr", info, "Ptr", attr) ; ITypeInfo::ReleaseTypeAttr()
@@ -93,14 +93,14 @@ class TI_EnumWrapper extends TI_Wrapper.TI_WrapperBaseClass
 				hr := DllCall(NumGet(NumGet(info+0), 06*A_PtrSize, "Ptr"), "Ptr", info, "UInt", A_Index - 1, "Ptr*", varDesc, "Int") ; ITypeInfo::GetVarDesc()
 				if (FAILED(hr) || !varDesc)
 				{
-					throw Exception("VARDESC no. " A_Index - 1 " could not be read.", -1, TI_FormatError(hr))
+					throw Exception("VARDESC no. " A_Index - 1 " could not be read.", -1, FormatError(hr))
 				}
 
 				varID := NumGet(1*varDesc, 00, "Int") ; VARDESC::memid
 				hr := DllCall(NumGet(NumGet(info+0), 12*A_PtrSize, "Ptr"), "Ptr", info, "Int", varID, "Ptr*", pVarName, "Ptr", 0, "UInt", 0, "Ptr", 0, "Int") ; ITypeInfo::GetDocumentation()
 				if (FAILED(hr) || !pVarName)
 				{
-					throw Exception("GetDocumentation() failed.", -1, TI_FormatError(hr))
+					throw Exception("GetDocumentation() failed.", -1, FormatError(hr))
 				}
 				varValue := VARIANT_GetValue(NumGet(1 * varDesc, 04 + A_PtrSize, "Ptr")) ; VARDESC::lpvarValue
 
