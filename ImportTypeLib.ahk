@@ -10,11 +10,11 @@ Parameters:
 */
 ImportTypeLib(lib, version = "1.0")
 {
-	local verMajor, verMinor, libid, hr
+	local ver, verMajor, verMinor, libid, hr
 
 	if (GUID_IsGUIDString(lib))
 	{
-		if (!TI_GetVersion(version, verMajor, verMinor))
+		if (!RegExMatch(lib, "^(?P<Major>\d+)\.(?P<Minor>\d+)$", ver))
 		{
 			throw Exception("Invalid version specified: """ version """.", -1)
 		}
