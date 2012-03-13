@@ -67,10 +67,8 @@ class TI_ExecutableWrapperBaseClass extends TI_Wrapper.TI_WrapperBaseClass
 				}
 			}
 			*/
-			ListVars
 			throw Exception("""" method """ could not be called.", -1, TI_FormatError(hr))
 		}
-		MsgBox % "vt: " NumGet(&result, 00, "UShort")
 		return VARIANT_GetValue(&result)
 	}
 
@@ -104,10 +102,8 @@ class TI_ExecutableWrapperBaseClass extends TI_Wrapper.TI_WrapperBaseClass
 			hr := DllCall(NumGet(NumGet(info+0), 11*A_PtrSize, "Ptr"), "Ptr", info, "Ptr", instance, "UInt", dispid, "UShort", DISPATCH_METHOD | DISPATCH_PROPERTYGET, "Ptr", &dispparams, "Ptr", &result, "Ptr", &excepInfo, "Ptr", 0, "Int") ; ITypeInfo::Invoke()
 			if (FAILED(hr))
 			{
-				ListVars
 				throw Exception("""" property """ could not be retrieved.", -1, TI_FormatError(hr))
 			}
-			MsgBox % "vt: " NumGet(&result, 00, "UShort")
 			return VARIANT_GetValue(&result)
 		}
 	}
