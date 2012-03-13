@@ -69,4 +69,54 @@ class TI_EnumWrapper extends TI_Wrapper.TI_WrapperBaseClass
 			throw Exception("A field must not be set on an enumeration class!", -1)
 		}
 	}
+
+	_NewEnum()
+	{
+		local hr, typeName, info, obj, attr := 0, varCount, varDesc := 0, varID, pVarName := 0, varValue
+
+		obj := this["internal://enumerator-object"]
+		if (!IsObject(obj))
+		{
+			obj := this["internal://enumerator-object"] := {}
+			typeName := this["internal://typeinfo-name"]
+			info := this["internal://typeinfo-instance"]
+
+			hr := DllCall(NumGet(NumGet(info+0), 03*A_PtrSize, "Ptr"), "Ptr", info, "Ptr*", attr, "Int") ; ITypeInfo::GetTypeAttr()
+			if (FAILED(hr) || !attr)
+			{
+				throw Exception("TYPEATTR could not be read.", -1, TI_FormatError(hr))
+			}
+			varCount := NumGet(1*attr, 42+1*A_PtrSize, "UShort") ; TYPEATTR::cVars
+			DllCall(NumGet(NumGet(info+0), 19*A_PtrSize, "Ptr"), "Ptr", info, "Ptr", attr) ; ITypeInfo::ReleaseTypeAttr()
+
+			Loop % varCount
+			{
+				hr := DllCall(NumGet(NumGet(info+0), 06*A_PtrSize, "Ptr"), "Ptr", info, "UInt", A_Index - 1, "Ptr*", varDesc, "Int") ; ITypeInfo::GetVarDesc()
+				if (FAILED(hr) || !varDesc)
+				{
+					throw Exception("VARDESC no. " A_Index - 1 " could not be read.", -1, TI_FormatError(hr))
+				}
+
+				varID := NumGet(1*varDesc, 00, "Int") ; VARDESC::memid
+				hr := DllCall(NumGet(NumGet(info+0), 12*A_PtrSize, "Ptr"), "Ptr", info, "Int", varID, "Ptr*", pVarName, "Ptr", 0, "UInt", 0, "Ptr", 0, "Int") ; ITypeInfo::GetDocumentation()
+				if (FAILED(hr) || !pVarName)
+				{
+					throw Exception("GetDocumentation() failed.", -1, TI_FormatError(hr))
+				}
+				varValue := VARIANT_GetValue(NumGet(1 * varDesc, 04 + A_PtrSize, "Ptr")) ; VARDESC::lpvarValue
+
+				obj[StrGet(pVarName, "UTF-16")] := varValue
+
+				DllCall(NumGet(NumGet(info+0), 21*A_PtrSize, "Ptr"), "Ptr", info, "Ptr", varDesc) ; ITypeInfo::ReleaseVarDesc()
+				pVarName := 0, varDesc := 0
+			}
+		}
+
+		return ObjNewEnum(obj)
+	}
+
+	NewEnum()
+	{
+		return this._NewEnum()
+	}
 }
