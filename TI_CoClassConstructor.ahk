@@ -14,6 +14,10 @@ TI_CoClassConstructor(this, iid = 0)
 	if (!iid)
 	{
 		iid := this.base["internal://default-iid"] ; get coclass default interface
+		if (!iid) ; there's no default interface
+		{
+			throw Exception("An IID must be specified to create an instance of this class.", -1)
+		}
 	}
 
 	hr := GUID_FromString(iid, iid_mem)
