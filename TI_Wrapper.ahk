@@ -8,6 +8,7 @@ class TI_Wrapper
 	#include TI_InterfaceWrapper.ahk
 	#include TI_EnumWrapper.ahk
 	#include TI_StructureWrapper.ahk
+	#include TI_ModuleWrapper.ahk
 
 	#include TI_TypeLibWrapper.ahk
 }
