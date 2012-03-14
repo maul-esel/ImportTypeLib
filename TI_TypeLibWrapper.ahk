@@ -2,11 +2,17 @@ class TI_TypeLibWrapper
 {
 	__New(lib)
 	{
-		static valid_typekinds := 0
+		static valid_typekinds := 0, TYPEKIND_ENUM := 0, TYPEKIND_RECORD := 1, TYPEKIND_MODULE := 2, TYPEKIND_INTERFACE := 3, TYPEKIND_COCLASS := 5
 		local typeKind := -1, hr, typename, obj, typeInfo := 0
 
 		if (!IsObject(valid_typekinds)) ; init static field
-			 valid_typekinds := { 0 : TI_Wrapper.TI_EnumWrapper, 1 : TI_Wrapper.TI_StructureWrapper, 5 : TI_Wrapper.TI_CoClassWrapper, 3 : TI_Wrapper.TI_InterfaceWrapper, 2 : TI_Wrapper.TI_ModuleWrapper }
+		{
+			 valid_typekinds := { (TYPEKIND_ENUM)		: TI_Wrapper.TI_EnumWrapper
+								, (TYPEKIND_RECORD)		: TI_Wrapper.TI_StructureWrapper
+								, (TYPEKIND_MODULE)		: TI_Wrapper.TI_ModuleWrapper
+								, (TYPEKIND_INTERFACE)	: TI_Wrapper.TI_InterfaceWrapper
+								, (TYPEKIND_COCLASS)	: TI_Wrapper.TI_CoClassWrapper }
+		 }
 
 		if (this != TI_Wrapper.TI_TypeLibWrapper)
 		{
