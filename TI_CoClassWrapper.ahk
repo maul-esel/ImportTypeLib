@@ -2,7 +2,7 @@ class TI_CoClassWrapper extends TI_Wrapper.TI_WrapperBaseClass
 {
 	__New(typeInfo, lib)
 	{
-		local hr, typeAttr := 0, implCount, implFlags := 0, implHref := 0, implInfo := 0, implAttr := 0, iid, Base
+		local hr, typeAttr := 0, implCount, implFlags := 0, implHref := -1, implInfo := 0, implAttr := 0, iid, Base
 		static IMPLTYPEFLAG_FDEFAULT := 1
 
 		if (this != TI_Wrapper.TI_CoClassWrapper)
@@ -30,7 +30,7 @@ class TI_CoClassWrapper extends TI_Wrapper.TI_WrapperBaseClass
 				if (HasEnumFlag(implFlags, IMPLTYPEFLAG_FDEFAULT))
 				{
 					hr := DllCall(NumGet(NumGet(typeInfo+0), 08*A_PtrSize, "Ptr"), "Ptr", typeInfo, "UInt", A_Index - 1, "UInt*", implHref, "Int") ; ITypeInfo::GetRefTypeOfImplType()
-					if (FAILED(hr) || !implHref)
+					if (FAILED(hr) || implHref == -1)
 					{
 						throw Exception("GetRefTypeOfImplType failed.", -1, FormatError(hr))
 					}
