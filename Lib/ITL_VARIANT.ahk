@@ -18,7 +18,7 @@ ITL_VARIANT_GetValue(variant)
 	local arr_data := 0, array := ComObjArray(VT_VARIANT, 1), vt := 0
 
 	vt := NumGet(1*variant, 00, "UShort")
-	array[0] := ComObjParameter(vt, NumGet(1*variant, 08, "Ptr"))
+	array[0] := ComObjParameter(vt, NumGet(1*variant, 08, "Int64"))
 
 	return vt == VT_UNKNOWN ? NumGet(1*variant, 08, "Ptr") : array[0]
 }
