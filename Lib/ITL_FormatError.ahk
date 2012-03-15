@@ -1,4 +1,4 @@
-﻿FormatError(hr)
+﻿ITL_FormatError(hr)
 {
 	static ALLOCATE_BUFFER := 0x00000100, FROM_SYSTEM := 0x00001000, IGNORE_INSERTS := 0x00000200
 	local size, msg, bufaddr := 0

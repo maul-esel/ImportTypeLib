@@ -23,9 +23,9 @@ class ITL_TypeLibWrapper
 			Loop % DllCall(NumGet(NumGet(lib+0), 03*A_PtrSize, "Ptr"), "Ptr", lib, "Int") ; ITypeLib::GetTypeInfoCount()
 			{
 				hr := DllCall(NumGet(NumGet(lib+0), 05*A_PtrSize, "Ptr"), "Ptr", lib, "UInt", A_Index - 1, "UInt*", typeKind, "Int") ; ITypeLib::GetTypeKind()
-				if (FAILED(hr))
+				if (ITL_FAILED(hr))
 				{
-					throw Exception("Type information kind no. " A_Index - 1 " could not be read.", -1, FormatError(hr))
+					throw Exception("Type information kind no. " A_Index - 1 " could not be read.", -1, ITL_FormatError(hr))
 				}
 				if (!valid_typekinds.HasKey(typeKind))
 				{
@@ -33,9 +33,9 @@ class ITL_TypeLibWrapper
 				}
 
 				hr := DllCall(NumGet(NumGet(lib+0), 04*A_PtrSize, "Ptr"), "Ptr", lib, "UInt", A_Index - 1, "Ptr*", typeInfo, "Int") ; ITypeLib::GetTypeInfo()
-				if (FAILED(hr))
+				if (ITL_FAILED(hr))
 				{
-					throw Exception("Type information no. " A_Index - 1 " could not be read.", -1, FormatError(hr))
+					throw Exception("Type information no. " A_Index - 1 " could not be read.", -1, ITL_FormatError(hr))
 				}
 
 				typename := this.GetName(A_Index - 1), obj := valid_typekinds[typeKind]
@@ -50,9 +50,9 @@ class ITL_TypeLibWrapper
 
 		lib := this["internal://typelib-instance"]
 		hr := DllCall(NumGet(NumGet(lib+0), 09*A_PtrSize, "Ptr"), "Ptr", lib, "UInt", index, "Ptr*", name, "Ptr*", 0, "UInt*", 0, "Ptr*", 0, "Int") ; ITypeLib::GetDocumentation()
-		if (FAILED(hr))
+		if (ITL_FAILED(hr))
 		{
-			throw Exception("Name for the " (index == -1 ? "type library" : "type description no. " index) " could not be read.", -1, FormatError(hr))
+			throw Exception("Name for the " (index == -1 ? "type library" : "type description no. " index) " could not be read.", -1, ITL_FormatError(hr))
 		}
 
 		return StrGet(name, "UTF-16")
@@ -80,9 +80,9 @@ class ITL_TypeLibWrapper
 			else
 			{
 				hr := DllCall(NumGet(NumGet(lib+0), 04*A_PtrSize, "Ptr"), "Ptr", lib, "UInt", obj, "Ptr*", info, "Int") ; ITypeLib::GetTypeInfo()
-				if (FAILED(hr) || !info)
+				if (ITL_FAILED(hr) || !info)
 				{
-					throw Exception("Type information could not be read.", -1, FormatError(hr))
+					throw Exception("Type information could not be read.", -1, ITL_FormatError(hr))
 				}
 			}
 		}
@@ -90,32 +90,32 @@ class ITL_TypeLibWrapper
 		if (obj == -1)
 		{
 			hr := DllCall(NumGet(NumGet(lib+0), 07*A_PtrSize, "Ptr"), "Ptr", lib, "Ptr*", attr, "Int") ; ITypeLib::GetLibAttr()
-			if (FAILED(hr) || !attr)
+			if (ITL_FAILED(hr) || !attr)
 			{
-				throw Exception("TLIBATTR could not be read.", -1, FormatError(hr))
+				throw Exception("TLIBATTR could not be read.", -1, ITL_FormatError(hr))
 			}
 
-			guid := Mem_Allocate(16), Mem_Copy(attr, guid, 16) ; TLIBATTR::guid
+			guid := ITL_Mem_Allocate(16), ITL_Mem_Copy(attr, guid, 16) ; TLIBATTR::guid
 			if (returnRaw)
 				result := guid
 			else
-				result := GUID_ToString(guid), Mem_Release(guid)
+				result := ITL_GUID_ToString(guid), ITL_Mem_Release(guid)
 
 			DllCall(NumGet(NumGet(lib+0), 12*A_PtrSize, "Ptr"), "Ptr", lib, "Ptr", attr) ; ITypeLib::ReleaseTLibAttr()
 		}
 		else
 		{
 			hr := DllCall(NumGet(NumGet(info+0), 03*A_PtrSize, "Ptr"), "Ptr", info, "Ptr*", attr, "Int") ; ITypeInfo::GetTypeAttr()
-			if (FAILED(hr) || !attr)
+			if (ITL_FAILED(hr) || !attr)
 			{
-				throw Exception("TYPEATTR could not be read.", -1, FormatError(hr))
+				throw Exception("TYPEATTR could not be read.", -1, ITL_FormatError(hr))
 			}
 
-			guid := Mem_Allocate(16), Mem_Copy(attr, guid, 16) ; TYPEATTR::guid
+			guid := ITL_Mem_Allocate(16), ITL_Mem_Copy(attr, guid, 16) ; TYPEATTR::guid
 			if (returnRaw)
 				result := guid
 			else
-				result := GUID_ToString(guid), Mem_Release(guid)
+				result := ITL_GUID_ToString(guid), ITL_Mem_Release(guid)
 
 			DllCall(NumGet(NumGet(info+0), 19*A_PtrSize, "Ptr"), "Ptr", info, "Ptr", attr, "Int") ; ITypeInfo::ReleaseTypeAttr()
 		}

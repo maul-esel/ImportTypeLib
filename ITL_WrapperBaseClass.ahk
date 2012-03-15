@@ -11,9 +11,9 @@ class ITL_WrapperBaseClass
 			this["internal://typelib-object"] := lib, ObjAddRef(lib)
 
 			hr := DllCall(NumGet(NumGet(typeInfo+0), 12*A_PtrSize, "Ptr"), "Ptr", typeInfo, "Int", -1, "Ptr*", name, "Ptr*", 0, "UInt*", 0, "Ptr*", 0, "Int")
-			if (FAILED(hr) || !name)
+			if (ITL_FAILED(hr) || !name)
 			{
-				throw Exception("Name for the type description could not be read.", -1, FormatError(hr))
+				throw Exception("Name for the type description could not be read.", -1, ITL_FormatError(hr))
 			}
 
 			this["internal://typeinfo-name"] := StrGet(name, "UTF-16")
