@@ -1,14 +1,14 @@
-class TI_CoClassWrapper extends TI_Wrapper.TI_WrapperBaseClass
+class ITL_CoClassWrapper extends ITL_Wrapper.ITL_WrapperBaseClass
 {
 	__New(typeInfo, lib)
 	{
 		local hr, typeAttr := 0, implCount, implFlags := 0, implHref := -1, implInfo := 0, implAttr := 0, iid, Base
 		static IMPLTYPEFLAG_FDEFAULT := 1
 
-		if (this != TI_Wrapper.TI_CoClassWrapper)
+		if (this != ITL_Wrapper.ITL_CoClassWrapper)
 		{
 			Base.__New(typeInfo, lib)
-			ObjInsert(this, "__New", Func("TI_CoClassConstructor"))
+			ObjInsert(this, "__New", Func("ITL_CoClassConstructor"))
 			this["internal://class-clsid"] := lib.GetGUID(typeInfo, false, true)
 
 			; get default interface:

@@ -38,12 +38,12 @@ ImportTypeLib(lib, version = "1.0")
 	{
 		throw Exception("Loading of type library failed.", -1, FormatError(hr))
 	}
-	return new TI_Wrapper.TI_TypeLibWrapper(lib)
+	return new ITL_Wrapper.ITL_TypeLibWrapper(lib)
 }
 
-#include TI_CoClassConstructor.ahk
-#include TI_AbstractClassConstructor.ahk
-#include TI_StructureConstructor.ahk
-#include TI_InterfaceConstructor.ahk
+#include ITL_CoClassConstructor.ahk
+#include ITL_AbstractClassConstructor.ahk
+#include ITL_StructureConstructor.ahk
+#include ITL_InterfaceConstructor.ahk
 
-#include TI_Wrapper.ahk
+#include ITL_Wrapper.ahk

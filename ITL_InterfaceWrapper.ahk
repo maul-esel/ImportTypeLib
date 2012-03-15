@@ -1,12 +1,12 @@
-class TI_InterfaceWrapper extends TI_Wrapper.TI_WrapperBaseClass
+class ITL_InterfaceWrapper extends ITL_Wrapper.ITL_WrapperBaseClass
 {
 	__New(typeInfo, lib)
 	{
 		local Base
-		if (this != TI_Wrapper.TI_InterfaceWrapper)
+		if (this != ITL_Wrapper.ITL_InterfaceWrapper)
 		{
 			Base.__New(typeInfo, lib)
-			ObjInsert(this, "__New", Func("TI_InterfaceConstructor"))
+			ObjInsert(this, "__New", Func("ITL_InterfaceConstructor"))
 			this["internal://interface-iid"] := lib.GetGUID(typeInfo, false, true)
 		}
 	}
@@ -91,7 +91,7 @@ class TI_InterfaceWrapper extends TI_Wrapper.TI_WrapperBaseClass
 		, sizeof_DISPPARAMS := 8 + 2 * A_PtrSize, sizeof_EXCEPINFO := 12 + 5 * A_PtrSize, sizeof_VARIANT := 16
 		local dispparams, hr, info, dispid := DISPID_UNKNOWN, instance, excepInfo, err_index, result
 
-		if (property != "base" && !RegExMatch(property, "^internal://")) ; ignore base and internal properties (handled by TI_WrapperBaseClass)
+		if (property != "base" && !RegExMatch(property, "^internal://")) ; ignore base and internal properties (handled by ITL_WrapperBaseClass)
 		{
 			; init structures
 			if (VarSetCapacity(dispparams, sizeof_DISPPARAMS, 00) != sizeof_DISPPARAMS)
@@ -129,7 +129,7 @@ class TI_InterfaceWrapper extends TI_Wrapper.TI_WrapperBaseClass
 		, DISP_E_MEMBERNOTFOUND := -2147352573
 		local variant, dispparams, hr, info, dispid := DISPID_UNKNOWN, vt, instance, excepInfo, err_index, variant
 
-		if (property != "base" && !RegExMatch(property, "^internal://")) ; ignore base and internal properties (handled by TI_WrapperBaseClass)
+		if (property != "base" && !RegExMatch(property, "^internal://")) ; ignore base and internal properties (handled by ITL_WrapperBaseClass)
 		{
 			; init structures
 			if (VarSetCapacity(dispparams, sizeof_DISPPARAMS, 00) != sizeof_DISPPARAMS)

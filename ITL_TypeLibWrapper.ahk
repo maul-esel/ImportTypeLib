@@ -1,4 +1,4 @@
-class TI_TypeLibWrapper
+class ITL_TypeLibWrapper
 {
 	__New(lib)
 	{
@@ -7,16 +7,16 @@ class TI_TypeLibWrapper
 
 		if (!IsObject(valid_typekinds)) ; init static field
 		{
-			 valid_typekinds := { (TYPEKIND_ENUM)		: TI_Wrapper.TI_EnumWrapper
-								, (TYPEKIND_RECORD)		: TI_Wrapper.TI_StructureWrapper
-								, (TYPEKIND_MODULE)		: TI_Wrapper.TI_ModuleWrapper
-								, (TYPEKIND_INTERFACE)	: TI_Wrapper.TI_InterfaceWrapper
-								, (TYPEKIND_COCLASS)	: TI_Wrapper.TI_CoClassWrapper }
+			 valid_typekinds := { (TYPEKIND_ENUM)		: ITL_Wrapper.ITL_EnumWrapper
+								, (TYPEKIND_RECORD)		: ITL_Wrapper.ITL_StructureWrapper
+								, (TYPEKIND_MODULE)		: ITL_Wrapper.ITL_ModuleWrapper
+								, (TYPEKIND_INTERFACE)	: ITL_Wrapper.ITL_InterfaceWrapper
+								, (TYPEKIND_COCLASS)	: ITL_Wrapper.ITL_CoClassWrapper }
 		 }
 
-		if (this != TI_Wrapper.TI_TypeLibWrapper)
+		if (this != ITL_Wrapper.ITL_TypeLibWrapper)
 		{
-			ObjInsert(this, "__New", Func("TI_AbstractClassConstructor"))
+			ObjInsert(this, "__New", Func("ITL_AbstractClassConstructor"))
 			this["internal://typelib-instance"] := lib
 			this["internal://typelib-name"] := this.GetName()
 

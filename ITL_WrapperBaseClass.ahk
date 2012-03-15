@@ -1,11 +1,11 @@
-class TI_WrapperBaseClass
+class ITL_WrapperBaseClass
 {
 	__New(typeInfo, lib)
 	{
 		local hr, name := 0, typeInfo2
 		static IID_ITypeInfo2 := "{00020412-0000-0000-C000-000000000046}"
 
-		if (this != TI_Wrapper.TI_WrapperBaseClass)
+		if (this != ITL_Wrapper.ITL_WrapperBaseClass)
 		{
 			ObjInsert(this, "internal://data-storage", {})
 			this["internal://typelib-object"] := lib, ObjAddRef(lib)

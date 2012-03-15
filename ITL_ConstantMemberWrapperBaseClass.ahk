@@ -1,11 +1,11 @@
-class TI_ConstantMemberWrapperBaseClass extends TI_Wrapper.TI_WrapperBaseClass
+class ITL_ConstantMemberWrapperBaseClass extends ITL_Wrapper.ITL_WrapperBaseClass
 {
 	__Get(field)
 	{
 		static VARKIND_CONST := 2, DISPID_UNKNOWN := -1
 		local hr, info, typeName, varID := DISPID_UNKNOWN, index := -1, varDesc := 0, varValue := ""
 
-		if (field != "base" && !RegExMatch(field, "^internal://")) ; ignore base and internal properties (handled by TI_WrapperBaseClass)
+		if (field != "base" && !RegExMatch(field, "^internal://")) ; ignore base and internal properties (handled by ITL_WrapperBaseClass)
 		{
 			info := this["internal://typeinfo-instance"]
 			typeName := this["internal://typeinfo-name"]
@@ -52,7 +52,7 @@ class TI_ConstantMemberWrapperBaseClass extends TI_Wrapper.TI_WrapperBaseClass
 
 	__Set(field, params*)
 	{
-		if (field != "base" && !RegExMatch(field, "^internal://")) ; ignore base and internal properties (handled by TI_WrapperBaseClass)
+		if (field != "base" && !RegExMatch(field, "^internal://")) ; ignore base and internal properties (handled by ITL_WrapperBaseClass)
 		{
 			throw Exception("A field must not be set on this class!", -1)
 		}
