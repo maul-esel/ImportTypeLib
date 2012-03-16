@@ -107,6 +107,12 @@ class ITL_ConstantMemberWrapperBaseClass extends ITL_Wrapper.ITL_WrapperBaseClas
 					throw Exception("VARDESC no. " A_Index - 1 " could not be read.", -1, ITL_FormatError(hr))
 				}
 
+				; check if it is actually a constant we can map (it is very unlikely / impossible that it's something different, yet check to be sure)
+				if (NumGet(1*varDesc, 04 + 7 * A_PtrSize, "UShort") != VARKIND_CONST) ; VARDESC::varkind
+				{
+					throw Exception("Cannot read non-constant member """ field """!", -1)
+				}
+
 				; from the structure, get the variable member id:
 				varID := NumGet(1*varDesc, 00, "Int") ; VARDESC::memid
 
@@ -116,6 +122,7 @@ class ITL_ConstantMemberWrapperBaseClass extends ITL_Wrapper.ITL_WrapperBaseClas
 				{
 					throw Exception("GetDocumentation() failed.", -1, ITL_FormatError(hr))
 				}
+
 				; get the VARIANT out of the structure and retrieve its value:
 				varValue := ITL_VARIANT_GetValue(NumGet(1 * varDesc, 2 * A_PtrSize, "Ptr")) ; VARDESC::lpvarValue
 
