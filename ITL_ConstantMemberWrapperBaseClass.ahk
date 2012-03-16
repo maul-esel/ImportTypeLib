@@ -46,13 +46,13 @@ class ITL_ConstantMemberWrapperBaseClass extends ITL_Wrapper.ITL_WrapperBaseClas
 			}
 
 			; check if it is actually a constant we can map (it is very unlikely / impossible that it's something different, yet check to be sure)
-			if (NumGet(1*varDesc, 08 + 6 * A_PtrSize, "UShort") != VARKIND_CONST) ; VARDESC::varkind
+			if (NumGet(1*varDesc, 04 + 7 * A_PtrSize, "UShort") != VARKIND_CONST) ; VARDESC::varkind
 			{
 				throw Exception("Cannot read non-constant member """ field """!", -1)
 			}
 
 			; get the VARIANT value out of the structure and get it's real value:
-			varValue := ITL_VARIANT_GetValue(NumGet(1 * varDesc, 04 + A_PtrSize, "Ptr")) ; VARDESC::lpvarValue
+			varValue := ITL_VARIANT_GetValue(NumGet(1 * varDesc, 2 * A_PtrSize, "Ptr")) ; VARDESC::lpvarValue
 
 			; we don't need the VARDESC structure anymore, so officially release it:
 			DllCall(NumGet(NumGet(info+0), 21*A_PtrSize, "Ptr"), "Ptr", info, "Ptr", varDesc) ; ITypeInfo::ReleaseVarDesc()
@@ -117,7 +117,7 @@ class ITL_ConstantMemberWrapperBaseClass extends ITL_Wrapper.ITL_WrapperBaseClas
 					throw Exception("GetDocumentation() failed.", -1, ITL_FormatError(hr))
 				}
 				; get the VARIANT out of the structure and retrieve its value:
-				varValue := ITL_VARIANT_GetValue(NumGet(1 * varDesc, 04 + A_PtrSize, "Ptr")) ; VARDESC::lpvarValue
+				varValue := ITL_VARIANT_GetValue(NumGet(1 * varDesc, 2 * A_PtrSize, "Ptr")) ; VARDESC::lpvarValue
 
 				; store the field in the enumerator object:
 				obj[StrGet(pVarName, "UTF-16")] := varValue
