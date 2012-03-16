@@ -19,13 +19,13 @@ class ITL_ModuleWrapper extends ITL_Wrapper.ITL_ConstantMemberWrapperBaseClass
 		info := this["internal://typeinfo-instance"]
 
 		hr := DllCall(NumGet(NumGet(info+0), 10*A_PtrSize, "Ptr"), "Ptr", info, "Str*", method, "UInt", 1, "Ptr*", id, "Int")
-		if (FAILED(hr) || id == DISPID_UNKNOWN)
+		if (ITL_FAILED(hr) || id == DISPID_UNKNOWN)
 		{
 			throw Exception("GetIDsOfNames() for """ method "()"" failed.", -1, ITL_FormatError(hr))
 		}
 
 		hr := DllCall(NumGet(NumGet(info+0), 15*A_PtrSize, "Ptr"), "Ptr", info, "UInt", id, "UInt", 0, "Ptr*", addr, "Int")
-		if (FAILED(hr) || !addr)
+		if (ITL_FAILED(hr) || !addr)
 		{
 			throw Exception("AddressOfMember() for """ method "()"" failed.", -1, ITL_FormatError(hr))
 		}
