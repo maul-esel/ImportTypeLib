@@ -1,0 +1,60 @@
+﻿<!DOCTYPE html>
+<html>
+	<head>
+		<title>General Usage - ImportTypeLib Documentation</title>
+		<link href="style.css" rel="stylesheet" type="text/css"/>
+	</head>
+	<body>
+		<h1>ImportTypeLib Documentation</h1>
+
+		<div id="content">
+
+			<h2>Usage Information - General Usage</h2>
+
+			<hr style="clear: left"/>
+
+			<h3>ImportTypeLib()</h3>
+			Loads a type library object.
+			<pre class="syntax">ImportTypeLib(File)<br/>ImportTypeLib(GUID [, Version = "1.0"])</pre>
+			<table class="param-table">
+				<thead>
+					<tr>
+						<th colspan="2">Parameter</th>
+						<!--th>Description</th-->
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td>File</td>
+						<td>
+							The file that contains the type library. This should be a *.exe, *.dll, *.olb or *.tlb file.
+							In case it is <em>not</em> a *.tlb file and therefore not a standalone type library, a type library resource is loaded.
+							This defaults to the first type library resource in that specified file. To load another resource, append the index to the path:
+							<pre class="example">lib := ImportTypeLib("C:\Path\to\file.dll\2") <span class="comment">; loads the 2nd type library</span></pre>
+						</td>
+					</tr>
+					<tr>
+						<td>GUID</td>
+						<td>
+							If a GUID is specified, a type library registered within the system is loaded.
+							The GUID is the library GUID of the type library, which must be present in the registry under <code>HKCR\TypeLib\</code>.
+						</td>
+					</tr>
+					<tr>
+						<td>Version</td>
+						<td>
+							In case a registered type library is loaded, a version may be specified. Use the format <em>major.minor</em> as in the default value <em>1.0</em>.
+						</td>
+					</tr>
+				</tbody>
+			</table>
+
+			<h4>Returns</h4>
+			A <a href="TypeLibObj.html">type library object</a> representing the loaded library.
+
+			<h4>Throws</h4>
+			When an error
+			occurs during loading of the type library or the creation of the wrapper object, an exception is thrown.
+		</div>
+	</body>
+</html>
