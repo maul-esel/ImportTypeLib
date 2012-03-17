@@ -26,15 +26,6 @@ th, td {
 	padding: 5px;
 }
 
-table.param-table thead tr th
-{
-	background-color: lightgray;
-	border-bottom: solid gray 1px;
-	border-top: solid gray 1px;
-	text-align: left;
-	padding: 1px;
-}
-
 table.param-table tbody tr td:first-child
 {
 	width: 15%;
@@ -66,9 +57,24 @@ pre.syntax {
 pre.example {
 	background-color: lightgray;
 	border: solid #888888 1px;
-	width: 95%;
+	width: 100%;
 }
 
 pre.example span.comment, pre.syntax span.comment {
 	color: darkgreen;
+}
+
+pre.example span.string, pre.syntax span.string {
+	color: #444444;
+	font-style: italic;
+}
+
+h4 {
+	padding: 5px;
+	padding-top: 1px;
+	padding-bottom: 1px;
+	background-color: lightgray;
+	border-bottom: solid gray 1px;
+	border-top: solid gray 1px;
+	width: 100%;
 }
