@@ -10,19 +10,14 @@
 		<div id="content">
 
 			<h2>Usage Information - General Usage</h2>
-
+			The <code>ImportTypeLib()</code> function is the heart of ImportTypeLib. It is called by a script to load and enwrap a type library.
 			<hr style="clear: left"/>
 
 			<h3>ImportTypeLib()</h3>
 			Loads a type library object.
-			<pre class="syntax">ImportTypeLib(File)<br/>ImportTypeLib(GUID [, Version = "1.0"])</pre>
+			<pre class="syntax">ImportTypeLib(File)<br/>ImportTypeLib(GUID [, Version = <span class="string">&quot;1.0&quot;</span>])</pre>
+			<h4>Parameter</h4>
 			<table class="param-table">
-				<thead>
-					<tr>
-						<th colspan="2">Parameter</th>
-						<!--th>Description</th-->
-					</tr>
-				</thead>
 				<tbody>
 					<tr>
 						<td>File</td>
@@ -30,7 +25,7 @@
 							The file that contains the type library. This should be a *.exe, *.dll, *.olb or *.tlb file.
 							In case it is <em>not</em> a *.tlb file and therefore not a standalone type library, a type library resource is loaded.
 							This defaults to the first type library resource in that specified file. To load another resource, append the index to the path:
-							<pre class="example">lib := ImportTypeLib("C:\Path\to\file.dll\2") <span class="comment">; loads the 2nd type library</span></pre>
+							<pre class="example">lib := ImportTypeLib(<span class="string">&quot;C:\Path\to\file.dll\2&quot;</span>) <span class="comment">; loads the 2nd type library</span></pre>
 						</td>
 					</tr>
 					<tr>
