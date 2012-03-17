@@ -1,0 +1,74 @@
+﻿body {
+	font-family: Calibri, Tahoma, sans-serif;
+	margin: 2.5%;
+}
+
+h1 {
+	text-align: center;
+	text-decoration: underline;
+}
+
+div#content {
+	margin-left: 5%;
+	margin-right: 5%;
+	padding: 2.5%;
+	border: solid #CCCCCC 1px;
+}
+
+table {
+	margin-top: 10px;
+	margin-bottom: 10px;
+	width: 100%;
+	border-collapse: collapse;
+}
+
+th, td {
+	padding: 5px;
+}
+
+table.param-table thead tr th
+{
+	background-color: lightgray;
+	border-bottom: solid gray 1px;
+	border-top: solid gray 1px;
+	text-align: left;
+	padding: 1px;
+}
+
+table.param-table tbody tr td:first-child
+{
+	width: 15%;
+}
+
+a {
+	text-decoration: none;
+	font-weight: bold;
+	color: navy;
+}
+a:hover {
+	text-decoration: underline;
+}
+
+a[href='']
+{
+	color: darkred;
+}
+
+pre {
+	padding: 5px;
+}
+
+pre.syntax {
+	background-color: #FFFFAA;
+	border: solid #FFFF33 1px;
+	width: 100%;
+}
+pre.example {
+	background-color: lightgray;
+	border: solid #888888 1px;
+	width: 95%;
+}
+
+pre.example span.comment, pre.syntax span.comment {
+	color: darkgreen;
+}
