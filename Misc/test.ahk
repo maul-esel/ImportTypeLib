@@ -4,6 +4,8 @@
 #KeyHistory 0
 SetBatchLines -1
 ListLines Off
+
+#include ..\
 #include ImportTypeLib.ahk
 
 UIAutomation := ImportTypeLib(A_WinDir "\System32\UIAutomationCore.dll")
