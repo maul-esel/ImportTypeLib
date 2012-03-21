@@ -711,16 +711,13 @@ class ITL_StructureWrapper extends ITL_Wrapper.ITL_WrapperBaseClass
 {
 	__New(typeInfo, lib)
 	{
-		local Base, hr := 0x00, rcinfo := 0
+		local Base, hr, rcinfo := 0
 
 		if (this != ITL_Wrapper.ITL_StructureWrapper)
 		{
 			Base.__New(typeInfo, lib)
 
-			name := this["internal://typeinfo-name"]
-			MsgBox hr: %hr%`ntype: %typeInfo%`nrecord: %rcinfo%`nname: %name%
 			hr := DllCall("OleAut32\GetRecordInfoFromTypeInfo", "Ptr", typeInfo, "Ptr*", rcinfo, "Int")
-			MsgBox hr: %hr%`ntype: %typeInfo%`nrecord: %rcinfo%
 			if (ITL_FAILED(hr) || !rcinfo)
 			{
 				throw Exception("GetRecordInfoFromTypeInfo() failed.", -1, ITL_FormatError(hr))
@@ -854,7 +851,7 @@ class ITL_TypeLibWrapper
 		if (!IsObject(valid_typekinds)) ; init static field
 		{
 			 valid_typekinds := { (TYPEKIND_ENUM)		: ITL_Wrapper.ITL_EnumWrapper
-								, (TYPEKIND_RECORD)		: ITL_Wrapper.ITL_StructureWrapper
+								;, (TYPEKIND_RECORD)		: ITL_Wrapper.ITL_StructureWrapper
 								, (TYPEKIND_MODULE)		: ITL_Wrapper.ITL_ModuleWrapper
 								, (TYPEKIND_INTERFACE)	: ITL_Wrapper.ITL_InterfaceWrapper
 								, (TYPEKIND_COCLASS)	: ITL_Wrapper.ITL_CoClassWrapper }
