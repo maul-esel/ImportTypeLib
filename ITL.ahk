@@ -99,7 +99,7 @@ ITL_SUCCEEDED(hr)
 }
 ITL_VARIANT_Create(value, byRef buffer)
 {
-	static VT_VARIANT := 0xC, sizeof_VARIANT := 16
+	static VT_VARIANT := 0xC, sizeof_VARIANT := 8 + 2 * A_PtrSize
 	local arr_data := 0, array := ComObjArray(VT_VARIANT, 1)
 
 	array[0] := value
@@ -519,7 +519,7 @@ class ITL_InterfaceWrapper extends ITL_Wrapper.ITL_WrapperBaseClass
 		; code inspired by AutoHotkey_L source (script_com.cpp)
 		static DISPATCH_METHOD := 0x1
 		, DISPID_UNKNOWN := -1
-		, sizeof_DISPPARAMS := 8 + 2 * A_PtrSize, sizeof_EXCEPINFO := 12 + 5 * A_PtrSize, sizeof_VARIANT := 16
+		, sizeof_DISPPARAMS := 8 + 2 * A_PtrSize, sizeof_EXCEPINFO := 12 + 5 * A_PtrSize, sizeof_VARIANT := 8 + 2 * A_PtrSize
 		, DISP_E_MEMBERNOTFOUND := -2147352573, DISP_E_UNKNOWNNAME := -2147352570
 		local paramCount, dispparams, rgvarg := 0, hr, fn, info, dispid := DISPID_UNKNOWN, instance, excepInfo, err_index, result, variant
 
@@ -596,7 +596,7 @@ class ITL_InterfaceWrapper extends ITL_Wrapper.ITL_WrapperBaseClass
 		; code inspired by AutoHotkey_L source (script_com.cpp)
 		static DISPATCH_PROPERTYGET := 0x2, DISPATCH_METHOD := 0x1
 		, DISPID_UNKNOWN := -1
-		, sizeof_DISPPARAMS := 8 + 2 * A_PtrSize, sizeof_EXCEPINFO := 12 + 5 * A_PtrSize, sizeof_VARIANT := 16
+		, sizeof_DISPPARAMS := 8 + 2 * A_PtrSize, sizeof_EXCEPINFO := 12 + 5 * A_PtrSize, sizeof_VARIANT := 8 + 2 * A_PtrSize
 		local dispparams, hr, info, dispid := DISPID_UNKNOWN, instance, excepInfo, err_index, result
 
 		if (property != "base" && !RegExMatch(property, "^internal://")) ; ignore base and internal properties (handled by ITL_WrapperBaseClass)
@@ -711,13 +711,16 @@ class ITL_StructureWrapper extends ITL_Wrapper.ITL_WrapperBaseClass
 {
 	__New(typeInfo, lib)
 	{
-		local Base, hr, rcinfo := 0
+		local Base, hr := 0x00, rcinfo := 0
 
 		if (this != ITL_Wrapper.ITL_StructureWrapper)
 		{
 			Base.__New(typeInfo, lib)
 
+			name := this["internal://typeinfo-name"]
+			MsgBox hr: %hr%`ntype: %typeInfo%`nrecord: %rcinfo%`nname: %name%
 			hr := DllCall("OleAut32\GetRecordInfoFromTypeInfo", "Ptr", typeInfo, "Ptr*", rcinfo, "Int")
+			MsgBox hr: %hr%`ntype: %typeInfo%`nrecord: %rcinfo%
 			if (ITL_FAILED(hr) || !rcinfo)
 			{
 				throw Exception("GetRecordInfoFromTypeInfo() failed.", -1, ITL_FormatError(hr))
@@ -747,7 +750,7 @@ class ITL_StructureWrapper extends ITL_Wrapper.ITL_WrapperBaseClass
 
 	__Get(field)
 	{
-		static sizeof_VARIANT := 16
+		static sizeof_VARIANT := 8 + 2 * A_PtrSize
 		local hr, ptr, variant := 0, rcinfo
 
 		if (field != "base" && !RegExMatch(field, "^internal://")) ; ignore base and internal properties (handled by ITL_WrapperBaseClass)
