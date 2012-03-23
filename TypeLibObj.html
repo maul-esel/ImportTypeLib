@@ -1,0 +1,73 @@
+﻿<!DOCTYPE html>
+<html>
+	<head>
+		<title>Type Library Objects - ImportTypeLib Documentation</title>
+		<link href="style.css" rel="stylesheet" type="text/css"/>
+	</head>
+	<body>
+		<h1>ImportTypeLib Documentation</h1>
+
+		<div id="content">
+
+			<h2>Usage Information - Type Library Objects</h2>
+			Type Library Objects are objects returned by the <a href="General.html"><code>ImportTypeLib()</code> function</a>. They are used to manage the loaded type library.
+			<hr />
+
+			<h3>Retrieving a GUID</h3>
+			The <code>GetGUID()</code> method can be used to obtain a GUID for the type library itself or for any contained type.
+			<pre class="syntax">guid := ITL_TypeLibWrapper.GetGUID([obj = -1, returnRaw = false, passRaw = false])</pre>
+
+			<h4>Parameter</h4>
+			<table class="param-table">
+				<tbody>
+					<tr>
+						<td>obj</td>
+						<td>
+							<p>Represents the object to retrieve the GUID for. If omitted or set to -1, the GUID for the type library itself is returned.</p>
+							<p>Otherwise, it can be set to
+								<ul>
+									<li>the index of the type in the type library:
+										<pre class="example">guid := lib.GetGUID(3)</pre>
+									</li>
+									<li>the name of the type in the type library:
+										<pre class="example">guid := lib.GetGUID(<span class="string">"IMyInterface"</span>)</pre>
+									</li>
+									<li>the type object itself:
+										<pre class="example">guid := lib.GetGUID(lib.IMyInterface)</pre>
+									</li>
+									<li>a raw pointer to an <code>ITypeInfo</code> COM interface. See the <code>passRaw</code> parameter for more information.</li>
+								</ul>
+							</p>
+						</td>
+					</tr>
+					<tr>
+						<td>returnRaw</td>
+						<td>
+							If set to <code>true</code>, the GUID is returned as memory pointer. Otherwise (default behaviour), it is returned as string.
+						</td>
+					</tr>
+					<tr>
+						<td>passRaw</td>
+						<td>
+							<i>Not commonly used:</i> To pass a raw <code>ITypeInfo</code> pointer for the <code>obj</code> parameter, this must be set to true (to distinguish the pointer from an index).
+						</td>
+					</tr>
+				</tbody>
+			</table>
+
+			<h4>Returns</h4>
+			The return value is usually a string representing the GUID, unless the <code>returnRaw</code> parameter has been set to <code>true</code>, in whch case a memory pointer is returned.
+
+			<h4>Throws</h4>
+			If an invalid type object or type name was given, or if any of the necessary steps to retrieve the GUID fails, an exception is thrown.
+
+			<h4>Remarks</h4>
+			The returned GUID is the IID for an interface, the CLSID for a class or the LIBID for the type library.
+
+			<hr />
+
+			<h3>... More to come ...</h3>
+			...
+		</div>
+	</body>
+</html>
