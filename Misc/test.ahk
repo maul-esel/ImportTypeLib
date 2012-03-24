@@ -12,26 +12,26 @@ UIAutomation := ImportTypeLib(A_WinDir "\System32\UIAutomationCore.dll")
 
 struct := new UIAutomation.tagRECT()
 struct.left := 16
-MsgBox % struct.left
+MsgBox % "struct.left = " struct.left
 
-list := ""
+list := "TreeScope:`n"
 for field, value in UIAutomation.TreeScope
-	list .= "TreeScope." field " = " value "`n"
-list .= "`n"
+	list .= "`tTreeScope." field " = " value "`n"
+list .= "`nOrientationType:`n"
 for field, value in UIAutomation.OrientationType
-	list .= "OrientationType." field " = " value "`n"
-MsgBox % list
+	list .= "`tOrientationType." field " = " value "`n"
+MsgBox % "Enumeration fields:`n`n" list
 
 automation := new UIAutomation.IUIAutomation(new UIAutomation.CUIAutomation())
 
 desktop := new UIAutomation.IUIAutomationElement(automation.GetRootElement())
-MsgBox % GetElementInfo(desktop)
+MsgBox % "The desktop:`n`n" GetElementInfo(desktop) "`n`nClick [OK] and wait 3 seconds."
 
 sleep 3000
 
 MouseGetPos,,,hwin
 elem := new UIAutomation.IUIAutomationElement(automation.ElementFromHandle(ComObjParameter(0x4000, hwin)))
-MsgBox % GetElementInfo(elem)
+MsgBox % "The active window:`n`n" GetElementInfo(elem)
 
 GetElementInfo(elem)
 {
