@@ -85,7 +85,7 @@ class ITL_StructureWrapper extends ITL_Wrapper.ITL_WrapperBaseClass
 
 	__Set(field, value)
 	{
-		static INVOKE_PROPERTYPUTREF := 8
+		static INVOKE_PROPERTYPUT := 4
 		local hr, ptr, variant := 0, rcinfo
 
 		if (field != "base" && !RegExMatch(field, "^internal://")) ; ignore base and internal properties (handled by ITL_WrapperBaseClass)
@@ -94,7 +94,7 @@ class ITL_StructureWrapper extends ITL_Wrapper.ITL_WrapperBaseClass
 			, rcinfo := this.base["internal://rcinfo-instance"]
 
 			ITL_VARIANT_Create(value, variant)
-			hr := DllCall(NumGet(NumGet(rcinfo+0), 12*A_PtrSize, "Ptr"), "Ptr", rcinfo, "UInt", INVOKE_PROPERTYPUTREF, "Ptr", ptr, "Str", field, "Ptr", &variant, "Int") ; IRecordInfo::PutField()
+			hr := DllCall(NumGet(NumGet(rcinfo+0), 12*A_PtrSize, "Ptr"), "Ptr", rcinfo, "UInt", INVOKE_PROPERTYPUT, "Ptr", ptr, "Str", field, "Ptr", &variant, "Int") ; IRecordInfo::PutField()
 			if (ITL_FAILED(hr))
 			{
 				throw Exception("PutField() failed.", -1, ITL_FormatError(hr))
