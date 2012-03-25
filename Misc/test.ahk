@@ -20,7 +20,10 @@ for field, value in UIAutomation.TreeScope
 list .= "`nOrientationType:`n"
 for field, value in UIAutomation.OrientationType
 	list .= "`tOrientationType." field " = " value "`n"
-MsgBox % "Enumeration fields:`n`n" list
+list .= "`nstruct (tagRECT):`n"
+for field, value in struct
+	list .= "`tstruct." field " = " value "`n"
+MsgBox % "Enumeration and structure fields:`n`n" list
 
 automation := new UIAutomation.IUIAutomation(new UIAutomation.CUIAutomation())
 
