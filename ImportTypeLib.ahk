@@ -14,7 +14,7 @@ ImportTypeLib(lib, version = "1.0")
 
 	if (ITL_GUID_IsGUIDString(lib))
 	{
-		if (!RegExMatch(lib, "^(?P<Major>\d+)\.(?P<Minor>\d+)$", ver))
+		if (!RegExMatch(version, "^(?P<Major>\d+)\.(?P<Minor>\d+)$", ver))
 		{
 			throw Exception("Invalid version specified: """ version """.", -1)
 		}
