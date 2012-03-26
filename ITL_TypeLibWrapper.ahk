@@ -2,8 +2,9 @@ class ITL_TypeLibWrapper
 {
 	__New(lib)
 	{
-		static valid_typekinds := 0, TYPEKIND_ENUM := 0, TYPEKIND_RECORD := 1, TYPEKIND_MODULE := 2, TYPEKIND_INTERFACE := 3, TYPEKIND_COCLASS := 5
-		local typeKind := -1, hr, typename, obj, typeInfo := 0
+		static valid_typekinds := "", VT_USERDEFINED := 29, MEMBERID_NIL := -1
+			, TYPEKIND_ENUM := 0, TYPEKIND_RECORD := 1, TYPEKIND_MODULE := 2, TYPEKIND_INTERFACE := 3, TYPEKIND_COCLASS := 5, TYPEKIND_ALIAS := 6
+		local typeKind := -1, hr, typeName, obj, typeInfo := 0, attr := 0, vt, mappings := [], refInfo := 0, hrefType, refAttr := 0, refKind
 
 		if (!IsObject(valid_typekinds)) ; init static field
 		{
@@ -27,7 +28,8 @@ class ITL_TypeLibWrapper
 				{
 					throw Exception("Type information kind no. " A_Index - 1 " could not be read.", -1, ITL_FormatError(hr))
 				}
-				if (!valid_typekinds.HasKey(typeKind))
+
+				if (!valid_typekinds.HasKey(typeKind) && typeKind != TYPEKIND_ALIAS)
 				{
 					ObjRelease(typeInfo), typeKind := -1, typeName := "", typeInfo := 0
 					continue
@@ -39,9 +41,63 @@ class ITL_TypeLibWrapper
 					throw Exception("Type information no. " A_Index - 1 " could not be read.", -1, ITL_FormatError(hr))
 				}
 
-				typename := this.GetName(A_Index - 1), obj := valid_typekinds[typeKind]
-				this[typename] := new obj(typeInfo, this)
+				typeName := this.GetName(A_Index - 1)
+				if (typeKind == TYPEKIND_ALIAS)
+				{
+					MsgBox %typeName% is an alias...
+					hr := DllCall(NumGet(NumGet(typeInfo+0), 03*A_PtrSize, "Ptr"), "Ptr", typeInfo, "Ptr*", attr, "Int") ; ITypeInfo::GetTypeAttr()
+					if (ITL_FAILED(hr) || !attr)
+					{
+						throw Exception("ITypeInfo::GetTypeAttr() failed.", -1, ITL_FormatError(hr))
+					}
+
+					vt := NumGet(1*attr, 56 + 2*A_PtrSize, "UShort") ; TYPEATTR::tdescAlias::vt
+					if (vt == VT_USERDEFINED)
+					{
+						hrefType := NumGet(1*attr, 56 + A_PtrSize, "UInt")
+						hr := DllCall(NumGet(NumGet(typeInfo+0), 14*A_PtrSize, "Ptr"), "Ptr", typeInfo, "UInt", hrefType, "Ptr*", refInfo) ; ITypeInfo::GetRefTypeInfo()
+						if (ITL_FAILED(hr) || !refInfo)
+						{
+							throw Exception("ITypeInfo::GetRefTypeInfo() failed.", -1, ITL_FormatError(hr))
+						}
+
+						hr := DllCall(NumGet(NumGet(refInfo+0), 03*A_PtrSize, "Ptr"), "Ptr", refInfo, "Ptr*", refAttr, "Int") ; ITypeInfo::GetTypeAttr()
+						if (ITL_FAILED(hr) || !refAttr)
+						{
+							throw Exception("ITypeInfo::GetTypeAttr() failed.", -1, ITL_FormatError(hr))
+						}
+
+						refKind := NumGet(1*attr, 36+A_PtrSize, "UInt") ; TYPEATTR::typekind
+						if (valid_typekinds.HasKey(refKind))
+						{
+							mappings.Insert(typeName, refInfo)
+						}
+
+						DllCall(NumGet(NumGet(refInfo+0), 19*A_PtrSize, "Ptr"), "Ptr", refInfo, "Ptr", refAttr) ; ITypeInfo::ReleaseTypeAttr()
+						, ObjRelease(refInfo)
+						, refInfo := 0, refAttr := 0
+					}
+
+					DllCall(NumGet(NumGet(typeInfo+0), 19*A_PtrSize, "Ptr"), "Ptr", typeInfo, "Ptr", attr) ; ITypeInfo::ReleaseTypeAttr()
+					, ObjRelease(typeInfo)
+					, attr := 0
+				}
+				else
+				{
+					obj := valid_typekinds[typeKind], this[typeName] := new obj(typeInfo, this)
+				}
 				typeName := "", typeInfo := 0, typeKind := -1
+			}
+
+			for alias, typeInfo in mappings
+			{
+				hr := DllCall(NumGet(NumGet(typeInfo+0), 12*A_PtrSize, "Ptr"), "Ptr", typeInfo, "Int", MEMBERID_NIL, "Ptr*", typeName, "Int")
+				if (ITL_FAILED(hr) || !typeName)
+				{
+					throw Exception("ITypeInfo::GetDocumentation() failed.", -1, ITL_FormatError(hr))
+				}
+				this[alias] := this[StrGet(typeName)]
+				ObjRelease(typeInfo)
 			}
 		}
 	}
