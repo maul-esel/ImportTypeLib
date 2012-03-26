@@ -25,7 +25,7 @@ ImportTypeLib(lib, version = "1.0")
 			throw Exception("LIBID could not be converted: """ lib """.", -1, ITL_FormatError(hr))
 		}
 
-		hr := DllCall("OleAut32\LoadRegTypeLib", "Ptr", &libid, "UShort", verMajor, "UShort", verMinor, "Ptr*", lib, "Int") ; error handling is done below
+		hr := DllCall("OleAut32\LoadRegTypeLib", "Ptr", &libid, "UShort", verMajor, "UShort", verMinor, "UInt", 0, "Ptr*", lib, "Int") ; error handling is done below
 
 		VarSetCapacity(libid, 0)
 	}
@@ -34,7 +34,7 @@ ImportTypeLib(lib, version = "1.0")
 		hr := DllCall("OleAut32\LoadTypeLib", "Str", lib, "Ptr*", lib, "Int") ; error handling is done below
 	}
 
-	if (ITL_FAILED(hr))
+	if (ITL_FAILED(hr) || !lib)
 	{
 		throw Exception("Loading of type library failed.", -1, ITL_FormatError(hr))
 	}
