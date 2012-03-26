@@ -45,9 +45,10 @@ class ITL_StructureWrapper extends ITL_Wrapper.ITL_WrapperBaseClass
 
 	__Delete()
 	{
-		local hr, ptr, rcinfo := this["internal://rcinfo-instance"]
+		local hr, ptr, rcinfo
 		if (ptr := this["internal://type-instance"])
 		{
+			rcinfo := this.base["internal://rcinfo-instance"]
 			hr := DllCall(NumGet(NumGet(rcinfo+0), 18*A_PtrSize, "Ptr"), "Ptr", rcinfo, "Ptr", ptr, "Int") ; IRecordInfo::RecordDestroy()
 			if (ITL_FAILED(hr))
 			{
@@ -56,6 +57,7 @@ class ITL_StructureWrapper extends ITL_Wrapper.ITL_WrapperBaseClass
 		}
 		else
 		{
+			rcinfo := this["internal://rcinfo-instance"]
 			ObjRelease(rcinfo)
 		}
 	}
