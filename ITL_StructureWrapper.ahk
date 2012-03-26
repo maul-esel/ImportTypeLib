@@ -25,7 +25,7 @@ class ITL_StructureWrapper extends ITL_Wrapper.ITL_WrapperBaseClass
 					throw Exception("Creating a GUID failed.", -1, ITL_FormatError(hr))
 				}
 
-				hr := DllCall(NumGet(NumGet(createInfo+0), 03 * A_PtrSize, "Ptr"), "Ptr", createInfo, "Ptr", &guid, "Int") ; ICreateTypeInfo::SetGuid() - assign a GUID for the type
+				hr := DllCall(NumGet(NumGet(createInfo+0), 03*A_PtrSize, "Ptr"), "Ptr", createInfo, "Ptr", &guid, "Int") ; ICreateTypeInfo::SetGuid() - assign a GUID for the type
 				if (ITL_FAILED(hr))
 				{
 					throw Exception("ICreateTypeInfo::SetGUID() failed.", -1, ITL_FormatError(hr))
@@ -35,7 +35,7 @@ class ITL_StructureWrapper extends ITL_Wrapper.ITL_WrapperBaseClass
 			hr := DllCall("OleAut32\GetRecordInfoFromTypeInfo", "Ptr", typeInfo, "Ptr*", rcinfo, "Int") ; retrieve an IRecordInfo instance for a type
 			if (ITL_FAILED(hr) || !rcinfo)
 			{
-				throw Exception("GetRecordInfoFromTypeInfo() failed.", -1, ITL_FormatError(hr))
+				throw Exception("GetRecordInfoFromTypeInfo() failed for type """ this["internal://typeinfo-name"] """.", -1, ITL_FormatError(hr))
 			}
 			this["internal://rcinfo-instance"] := rcinfo
 
