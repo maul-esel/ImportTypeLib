@@ -146,6 +146,27 @@ class ITL_StructureWrapper extends ITL_Wrapper.ITL_WrapperBaseClass
 		return this._NewEnum()
 	}
 
+	_Clone()
+	{
+		local hr, rcinfo := this.base["internal://rcinfo-instance"], ptrNew := 0, ptrOld := this["internal://type-instance"], newObj
+
+		newObj := new this.base()
+		ptrNew := newObj["internal://type-instance"]
+
+		hr := DllCall(NumGet(NumGet(rcinfo+0), 05*A_PtrSize, "Ptr"), "Ptr", rcinfo, "Ptr", ptrOld, "Ptr", ptrNew, "Int") ; IRecordInfo::RecordCopy()
+		if (ITL_FAILED(hr) || !ptrNew)
+		{
+			throw Exception("IRecordInfo::RecordCopy() failed.", -1, ITL_FormatError(hr))
+		}
+
+		return newObj ;new this.base(ptrNew, true)
+	}
+
+	Clone()
+	{
+		return this._Clone()
+	}
+
 	GetSize()
 	{
 		local hr, size := -1, rcinfo := this["internal://rcinfo-instance"]
