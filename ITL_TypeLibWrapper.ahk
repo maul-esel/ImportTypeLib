@@ -29,6 +29,7 @@ class ITL_TypeLibWrapper
 				}
 				if (!valid_typekinds.HasKey(typeKind))
 				{
+					ObjRelease(typeInfo)
 					continue
 				}
 
