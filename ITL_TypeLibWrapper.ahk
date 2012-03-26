@@ -23,24 +23,25 @@ class ITL_TypeLibWrapper
 			Loop % DllCall(NumGet(NumGet(lib+0), 03*A_PtrSize, "Ptr"), "Ptr", lib, "Int") ; ITypeLib::GetTypeInfoCount()
 			{
 				hr := DllCall(NumGet(NumGet(lib+0), 05*A_PtrSize, "Ptr"), "Ptr", lib, "UInt", A_Index - 1, "UInt*", typeKind, "Int") ; ITypeLib::GetTypeKind()
-				if (ITL_FAILED(hr))
+				if (ITL_FAILED(hr) || typeKind == -1)
 				{
 					throw Exception("Type information kind no. " A_Index - 1 " could not be read.", -1, ITL_FormatError(hr))
 				}
 				if (!valid_typekinds.HasKey(typeKind))
 				{
-					ObjRelease(typeInfo)
+					ObjRelease(typeInfo), typeKind := -1, typeName := "", typeInfo := 0
 					continue
 				}
 
 				hr := DllCall(NumGet(NumGet(lib+0), 04*A_PtrSize, "Ptr"), "Ptr", lib, "UInt", A_Index - 1, "Ptr*", typeInfo, "Int") ; ITypeLib::GetTypeInfo()
-				if (ITL_FAILED(hr))
+				if (ITL_FAILED(hr) || !typeInfo)
 				{
 					throw Exception("Type information no. " A_Index - 1 " could not be read.", -1, ITL_FormatError(hr))
 				}
 
 				typename := this.GetName(A_Index - 1), obj := valid_typekinds[typeKind]
 				this[typename] := new obj(typeInfo, this)
+				typeName := "", typeInfo := 0, typeKind := -1
 			}
 		}
 	}
