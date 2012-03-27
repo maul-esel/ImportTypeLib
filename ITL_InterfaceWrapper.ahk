@@ -108,7 +108,7 @@ class ITL_InterfaceWrapper extends ITL_Wrapper.ITL_WrapperBaseClass
 				vt := NumGet(1*paramArray, (A_Index - 1) * (4*A_PtrSize) + A_PtrSize, "UShort") ; ELEMDESC[A_Index - 1]::tdesc::vt
 
 				ITL_VARIANT_Create(params[A_Index], variant) ; create VARIANT and put it in the array
-				, ITL_Mem_Copy(&variant, &rgvarg + (A_Index - 1) * sizeof_VARIANT, sizeof_VARIANT)
+				, ITL_Mem_Copy(&variant, &rgvarg + (paramCount - A_Index) * sizeof_VARIANT, sizeof_VARIANT)
 			}
 			NumPut(&rgvarg, dispparams, 00, "Ptr") ; DISPPARAMS::rgvarg - the pointer to the VARIANT array
 			NumPut(paramCount, dispparams, 2 * A_PtrSize, "UInt") ; DISPPARAMS::cArgs - the number of arguments passed
