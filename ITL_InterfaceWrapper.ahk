@@ -237,7 +237,7 @@ class ITL_InterfaceWrapper extends ITL_Wrapper.ITL_WrapperBaseClass
 			info := this["internal://typeinfo-instance"]
 			instance := this["internal://type-instance"]
 
-			; get MEMBERID for the method to be set:
+			; get MEMBERID for the property to be set:
 			hr := DllCall(NumGet(NumGet(info+0), 10*A_PtrSize, "Ptr"), "Ptr", info, "Str*", property, "UInt", 1, "UInt*", dispid, "Int") ; ITypeInfo::GetIDsOfNames()
 			if (ITL_FAILED(hr) || dispid == DISPID_UNKNOWN) ; an error code was returned or the ID is invalid
 			{
