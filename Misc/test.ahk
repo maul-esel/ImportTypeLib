@@ -6,7 +6,7 @@ SetBatchLines -1
 ListLines Off
 
 #include ..\
-#include ImportTypeLib.ahk
+#include Main.ahk
 
 UIAutomation := ImportTypeLib(A_WinDir "\System32\UIAutomationCore.dll")
 
@@ -42,7 +42,7 @@ MouseGetPos,,,hwin
 
 request := new UIAutomation.IUIAutomationCacheRequest(automation.CreateCacheRequest())
 ;MsgBox % "value: " request.TreeScope
-request.TreeScope := UIAutomation.TreeScope.Children
+;request.TreeScope := UIAutomation.TreeScope.Children
 
 elem := new UIAutomation.IUIAutomationElement(automation.ElementFromHandleBuildCache(ComObjParameter(0x4000, hwin), ComObjParameter(0xD, request["internal://type-instance"])))
 MsgBox % "The active window:`n`n" GetElementInfo(elem)
