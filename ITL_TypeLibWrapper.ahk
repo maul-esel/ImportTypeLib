@@ -52,7 +52,7 @@ class ITL_TypeLibWrapper
 				typeName := this.GetName(A_Index - 1)
 				if (typeKind == TYPEKIND_ALIAS)
 				{
-					MsgBox %typeName% is an alias...
+					;MsgBox %typeName% is an alias...
 					hr := DllCall(NumGet(NumGet(typeInfo+0), 03*A_PtrSize, "Ptr"), "Ptr", typeInfo, "Ptr*", attr, "Int") ; ITypeInfo::GetTypeAttr()
 					if (ITL_FAILED(hr) || !attr)
 					{
