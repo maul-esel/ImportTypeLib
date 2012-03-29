@@ -41,7 +41,7 @@ ImportTypeLib(lib, version = "1.0")
 		;throw Exception("Loading of type library failed.", -1, ITL_FormatError(hr))
 		throw Exception(ITL_FormatException("Failed to load type library.", "", ErrorLevel, hr, !lib, "Invalid ITypeLibrary pointer: " lib)*)
 	}
-	return new ITL_Wrapper.ITL_TypeLibWrapper(lib)
+	return new ITL.ITL_TypeLibWrapper(lib)
 }
 ITL_FAILED(hr)
 {
@@ -291,7 +291,7 @@ ITL_InterfaceConstructor(this, instance)
 	}
 	this["internal://type-instance"] := interfacePtr
 }
-class ITL_Wrapper
+class ITL
 {
 	static __New := Func("ITL_AbstractClassConstructor")
 class ITL_WrapperBaseClass
@@ -301,7 +301,7 @@ class ITL_WrapperBaseClass
 		local hr, name := 0, typeInfo2
 		static IID_ITypeInfo2 := "{00020412-0000-0000-C000-000000000046}"
 
-		if (this != ITL_Wrapper.ITL_WrapperBaseClass)
+		if (this != ITL.ITL_WrapperBaseClass)
 		{
 			ObjInsert(this, "internal://data-storage", {})
 			this["internal://typelib-object"] := lib, ObjAddRef(lib)
@@ -351,7 +351,7 @@ class ITL_WrapperBaseClass
 }
 ; class: ITL_ConstantMemberWrapperBaseClass
 ; This is the base class for types that have constant variable members, i.e. enums and modules.
-class ITL_ConstantMemberWrapperBaseClass extends ITL_Wrapper.ITL_WrapperBaseClass
+class ITL_ConstantMemberWrapperBaseClass extends ITL.ITL_WrapperBaseClass
 {
 	; method: __Get
 	; gets the value of an enumeration field or module constant.
@@ -531,14 +531,14 @@ class ITL_ConstantMemberWrapperBaseClass extends ITL_Wrapper.ITL_WrapperBaseClas
 		return this._NewEnum()
 	}
 }
-class ITL_CoClassWrapper extends ITL_Wrapper.ITL_WrapperBaseClass
+class ITL_CoClassWrapper extends ITL.ITL_WrapperBaseClass
 {
 	__New(typeInfo, lib)
 	{
 		local hr, typeAttr := 0, implCount, implFlags := 0, implHref := -1, implInfo := 0, implAttr := 0, iid, Base
 		static IMPLTYPEFLAG_FDEFAULT := 1
 
-		if (this != ITL_Wrapper.ITL_CoClassWrapper)
+		if (this != ITL.ITL_CoClassWrapper)
 		{
 			Base.__New(typeInfo, lib)
 			ObjInsert(this, "__New", Func("ITL_CoClassConstructor"))
@@ -614,14 +614,14 @@ class ITL_CoClassWrapper extends ITL_Wrapper.ITL_WrapperBaseClass
 }
 ; class: ITL_InterfaceWrapper
 ; This class enwraps COM interfaces and provides the ability to call methods, set and retrieve properties.
-class ITL_InterfaceWrapper extends ITL_Wrapper.ITL_WrapperBaseClass
+class ITL_InterfaceWrapper extends ITL.ITL_WrapperBaseClass
 {
 	; method: __New
 	; This is the constructor for the wrapper, used by ITL_TypeLibWrapper.
 	__New(typeInfo, lib)
 	{
 		local Base
-		if (this != ITL_Wrapper.ITL_InterfaceWrapper)
+		if (this != ITL.ITL_InterfaceWrapper)
 		{
 			Base.__New(typeInfo, lib)
 			ObjInsert(this, "__New", Func("ITL_InterfaceConstructor")) ; change constructor for instances
@@ -896,27 +896,27 @@ class ITL_InterfaceWrapper extends ITL_Wrapper.ITL_WrapperBaseClass
 		}
 	}
 }
-class ITL_EnumWrapper extends ITL_Wrapper.ITL_ConstantMemberWrapperBaseClass
+class ITL_EnumWrapper extends ITL.ITL_ConstantMemberWrapperBaseClass
 {
 	__New(typeInfo, lib)
 	{
 		local Base
 
-		if (this != ITL_Wrapper.ITL_EnumWrapper)
+		if (this != ITL.ITL_EnumWrapper)
 		{
 			Base.__New(typeInfo, lib)
 			ObjInsert(this, "__New", Func("ITL_AbstractClassConstructor"))
 		}
 	}
 }
-class ITL_StructureWrapper extends ITL_Wrapper.ITL_WrapperBaseClass
+class ITL_StructureWrapper extends ITL.ITL_WrapperBaseClass
 {
 	__New(typeInfo, lib)
 	{
 		static GUID_NULL := "{00000000-0000-0000-0000-000000000000}", IID_ICreateTypeInfo := "{00020405-0000-0000-C000-000000000046}"
 		local Base, hr := 0x00, rcinfo := 0, guid:= 0
 
-		if (this != ITL_Wrapper.ITL_StructureWrapper)
+		if (this != ITL.ITL_StructureWrapper)
 		{
 			Base.__New(typeInfo, lib)
 
@@ -1145,13 +1145,13 @@ class ITL_StructureWrapper extends ITL_Wrapper.ITL_WrapperBaseClass
 		}
 	}
 }
-class ITL_ModuleWrapper extends ITL_Wrapper.ITL_ConstantMemberWrapperBaseClass
+class ITL_ModuleWrapper extends ITL.ITL_ConstantMemberWrapperBaseClass
 {
 	__New(typeInfo, lib)
 	{
 		local Base
 
-		if (this != ITL_Wrapper.ITL_ModuleWrapper)
+		if (this != ITL.ITL_ModuleWrapper)
 		{
 			Base.__New(typeInfo, lib)
 			ObjInsert(this, "__New", Func("ITL_AbstractClassConstructor"))
@@ -1202,14 +1202,14 @@ class ITL_TypeLibWrapper
 
 		if (!IsObject(valid_typekinds)) ; init static field
 		{
-			 valid_typekinds := { (TYPEKIND_ENUM)		: ITL_Wrapper.ITL_EnumWrapper
-								, (TYPEKIND_RECORD)		: ITL_Wrapper.ITL_StructureWrapper
-								, (TYPEKIND_MODULE)		: ITL_Wrapper.ITL_ModuleWrapper
-								, (TYPEKIND_INTERFACE)	: ITL_Wrapper.ITL_InterfaceWrapper
-								, (TYPEKIND_COCLASS)	: ITL_Wrapper.ITL_CoClassWrapper }
+			 valid_typekinds := { (TYPEKIND_ENUM)		: ITL.ITL_EnumWrapper
+								, (TYPEKIND_RECORD)		: ITL.ITL_StructureWrapper
+								, (TYPEKIND_MODULE)		: ITL.ITL_ModuleWrapper
+								, (TYPEKIND_INTERFACE)	: ITL.ITL_InterfaceWrapper
+								, (TYPEKIND_COCLASS)	: ITL.ITL_CoClassWrapper }
 		 }
 
-		if (this != ITL_Wrapper.ITL_TypeLibWrapper)
+		if (this != ITL.ITL_TypeLibWrapper)
 		{
 			ObjInsert(this, "__New", Func("ITL_AbstractClassConstructor"))
 			this["internal://typelib-instance"] := lib
@@ -1421,4 +1421,160 @@ class ITL_TypeLibWrapper
 		return result
 	}
 }
+; zero-based
+class ITL_StructureArray
+{
+	__New(type, count)
+	{
+		this["internal://type-obj"] := type
+		, this["internal://instance-count"] := count
+		, this["internal://memory-buffer"] := ITL_Mem_Allocate(count * type.GetSize())
+		, this["internal://instance-size"] := type.GetSize()
+		, this["internal://instance-array"] := []
+	}
+
+	__Get(property)
+	{
+		local buffer, size, index, struct
+		if (property != "base" && !RegExMatch(property, "^internal://"))
+		{
+			count := this["internal://instance-count"]
+			if (property == "")
+			{
+				buffer := this["internal://memory-buffer"], size := this["internal://instance-size"]
+				for index, struct in this
+				{
+					ITL_Mem_Copy(struct["internal://type-instance"], buffer + index * size, size)
+				}
+				return buffer
+			}
+
+			else if property is not integer
+			{
+				throw Exception(ITL_FormatException("Failed to retrieve an array element."
+												, """" property """ is not a valid array index."
+												, ErrorLevel)*)
+			}
+			else if (property < 0 || property >= count)
+			{
+				throw Exception(ITL_FormatException("Failed to retrieve an array element."
+												, """" property """ is out of range."
+												, ErrorLevel)*)
+			}
+
+			struct := this["internal://instance-array"][property]
+			if (!IsObject(struct))
+				this["internal://instance-array"][property] := struct := new this["internal://type-obj"]()
+			return struct
+		}
+	}
+
+	__Set(property, value)
+	{
+		local count := this["internal://instance-count"]
+		if (property != "base" && !RegExMatch(property, "^internal://"))
+		{
+			if property is not integer
+			{
+				throw Exception(ITL_FormatException("Failed to set an array element."
+												, """" property """ is not a valid array index."
+												, ErrorLevel)*)
+			}
+			else if (property < 0 || property >= count)
+			{
+				throw Exception(ITL_FormatException("Failed to set an array element."
+												, """" property """ is out of range."
+												, ErrorLevel)*)
+			}
+
+			if value is integer
+			{
+				value := new this["internal://type-obj"](value, true)
+			}
+			this["internal://instance-array"][property] := value
+		}
+	}
+
+	__Delete()
+	{
+		local index, struct, field, value
+
+		for index, struct in this
+			this[index] := ""
+		ITL_Mem_Release(this["internal://memory-buffer"])
+		for field, value in ObjNewEnum(this)
+			this[field] := ""
+	}
+
+	_NewEnum()
+	{
+		return ObjNewEnum(this["internal://instance-array"])
+	}
+
+	NewEnum()
+	{
+		return this._NewEnum()
+	}
+
+	SetCapacity(newCount)
+	{
+		local newBuffer := ITL_Mem_Allocate(newCount * this["internal://type-obj"].GetSize())
+		, oldBuffer := this["internal://memory-buffer"]
+		, oldCount := this["internal://instance-count"]
+
+		ITL_Mem_Copy(oldBuffer, newBuffer, oldCount), ITL_Mem_Release(oldBuffer)
+		this["internal://memory-buffer"] := newBuffer, this["internal://instance-count"] := newCount
+
+		if (newCount < oldCount)
+		{
+			this["internal://instance-array"].Remove(newCount - 1, oldCount - 1)
+		}
+	}
+}
+}
+; various misc. helper functions, later t be sorted out to separate classes / libs / files.
+
+ITL_IsSafeArray(obj)
+{
+	static VT_ARRAY := 0x2000
+	return IsObject(obj) && ITL_HasEnumFlag(ComObjType(obj), VT_ARRAY)
+}
+
+ITL_SafeArrayType(obj)
+{
+	static VT_ARRAY := 0x2000, VT_NULL := 1
+	if (ITL_IsSafeArray(obj))
+		return ComObjType(obj) ^ VT_ARRAY
+	return VT_NULL
+}
+
+ITL_CreateStructureSafeArray(type, dims*)
+{
+	static VT_RECORD := 0x24
+	local arr, hr
+
+	if (dims.MaxIndex() > 8 || dims.MinIndex() != 1)
+		throw Exception(ITL_FormatException("Failed to create a structure SAFEARRAY."
+										, "Invalid dimensions were specified."
+										, ErrorLevel)*)
+
+	arr := ComObjArray(VT_RECORD, dims*)
+	hr := DllCall("OleAut32\SafeArraySetRecordInfo", "Ptr", ComObjValue(arr), "Ptr", type["internal://rcinfo-instance"], "Int")
+	if (ITL_FAILED(hr))
+		throw Exception(ITL_FormatException("Failed to create a structure SAFEARRAY."
+										, "Could not set IRecordInfo."
+										, ErrorLevel, hr)*)
+
+	return arr
+}
+
+; for structures and interfaces
+ITL_GetInstancePointer(instance)
+{
+	return instance["internal://type-instance"]
+}
+
+ITL_CreateStructureArray(type, count)
+{
+	return new ITL.ITL_StructureArray(type, count)
 }
