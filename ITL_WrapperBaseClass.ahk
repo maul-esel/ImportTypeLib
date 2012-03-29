@@ -21,6 +21,7 @@ class ITL_WrapperBaseClass
 			}
 
 			this["internal://typeinfo-name"] := StrGet(name, "UTF-16")
+			this["internal://type-guid"] := lib.GetGUID(typeInfo, false, true)
 
 			typeInfo2 := ComObjQuery(typeInfo, IID_ITypeInfo2)
 			if (!typeInfo2)
