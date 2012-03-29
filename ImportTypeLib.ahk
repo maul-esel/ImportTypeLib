@@ -1160,36 +1160,32 @@ class ITL_ModuleWrapper extends ITL.ITL_ConstantMemberWrapperBaseClass
 
 	__Call(method, params*)
 	{
-		static DISPID_UNKNOWN := -1
+		static DISPID_UNKNOWN := -1, INVOKEKIND_FUNC := 1
 		local id := DISPID_UNKNOWN, hr := 0, addr := 0, info
 
 		info := this["internal://typeinfo-instance"]
 
-		hr := DllCall(NumGet(NumGet(info+0), 10*A_PtrSize, "Ptr"), "Ptr", info, "Str*", method, "UInt", 1, "Ptr*", id, "Int")
+		hr := DllCall(NumGet(NumGet(info+0), 10*A_PtrSize, "Ptr"), "Ptr", info, "Str*", method, "UInt", INVOKEKIND_FUNC, "Ptr*", id, "Int") ; ITypeInfo::GetIDsOfNames()
 		if (ITL_FAILED(hr) || id == DISPID_UNKNOWN)
 		{
 			;throw Exception("GetIDsOfNames() for """ method "()"" failed.", -1, ITL_FormatError(hr))
-			throw Exception(ITL_FormatException("Failed to call method """ method """ on module """ this.base["internal://typeinfo-name"] """."
+			throw Exception(ITL_FormatException("Failed to call method """ method """ on module """ this["internal://typeinfo-name"] """."
 											, "ITypeInfo::GetIDsOfNames() failed."
 											, ErrorLevel, hr
 											, id == DISPID_UNKNOWN, "Invalid DISPID: " id)*)
 		}
 
-		hr := DllCall(NumGet(NumGet(info+0), 15*A_PtrSize, "Ptr"), "Ptr", info, "UInt", id, "UInt", 0, "Ptr*", addr, "Int")
+		hr := DllCall(NumGet(NumGet(info+0), 15*A_PtrSize, "Ptr"), "Ptr", info, "UInt", id, "UInt", 1, "Ptr*", addr, "Int") ; ITypeInfo::AddressOfMember()
 		if (ITL_FAILED(hr) || !addr)
 		{
 			;throw Exception("AddressOfMember() for """ method "()"" failed.", -1, ITL_FormatError(hr))
-			throw Exception(ITL_FormatException("Failed to call method """ method """ on module """ this.base["internal://typeinfo-name"] """."
+			throw Exception(ITL_FormatException("Failed to call method """ method """ on module """ this["internal://typeinfo-name"] """."
 											, "ITypeInfo::AddressOfMember() failed."
 											, ErrorLevel, hr
 											, !addr, "Invalid member address: " addr)*)
 		}
 
-		; call!
-		; result := DllCall(addr, params*)
-		; get return type
-
-		return ; result
+		return DllCall(addr, params*)
 	}
 }
 class ITL_TypeLibWrapper
@@ -1246,7 +1242,7 @@ class ITL_TypeLibWrapper
 				typeName := this.GetName(A_Index - 1)
 				if (typeKind == TYPEKIND_ALIAS)
 				{
-					MsgBox %typeName% is an alias...
+					;MsgBox %typeName% is an alias...
 					hr := DllCall(NumGet(NumGet(typeInfo+0), 03*A_PtrSize, "Ptr"), "Ptr", typeInfo, "Ptr*", attr, "Int") ; ITypeInfo::GetTypeAttr()
 					if (ITL_FAILED(hr) || !attr)
 					{
