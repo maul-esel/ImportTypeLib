@@ -12,4 +12,6 @@ class ITL
 	#include ITL_ModuleWrapper.ahk
 
 	#include ITL_TypeLibWrapper.ahk
+
+	#include ITL_StructureArray.ahk
 }
