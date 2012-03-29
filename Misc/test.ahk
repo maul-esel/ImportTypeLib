@@ -8,6 +8,11 @@ ListLines Off
 #include ..\
 #include Main.ahk
 
+std := ImportTypeLib("C:\Program Files\Microsoft SDKs\Windows\v7.1\Lib\StdOle2.Tlb")
+picDisp := ComObjCreate("StdPicture")
+
+MsgBox % "Return value: " ITL_FormatError(std.StdFunctions.SavePicture("Ptr", ComObjUnwrap(picDisp), "Str", A_Desktop "\test.jpg", "Int")) " - " ErrorLevel " - " A_LastError
+
 UIAutomation := ImportTypeLib(A_WinDir "\System32\UIAutomationCore.dll")
 
 struct := new UIAutomation.tagRECT()
