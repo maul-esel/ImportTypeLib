@@ -59,3 +59,4 @@ ImportTypeLib(lib, version = "1.0")
 #include ITL_InterfaceConstructor.ahk
 
 #include ITL.ahk
+#include Misc.ahk
