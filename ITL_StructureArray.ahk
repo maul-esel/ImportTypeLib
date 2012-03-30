@@ -72,17 +72,6 @@ class ITL_StructureArray
 		}
 	}
 
-	__Delete()
-	{
-		local index, struct, field, value
-
-		for index, struct in this
-			this[index] := ""
-		ITL_Mem_Release(this[ITL.Properties.ARRAY_MEMBUFFER])
-		for field, value in ObjNewEnum(this)
-			this[field] := ""
-	}
-
 	_NewEnum()
 	{
 		return ObjNewEnum(this[ITL.Properties.ARRAY_INSTANCEOBJ])
