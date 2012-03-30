@@ -46,8 +46,8 @@ sleep 3000
 MouseGetPos,,,hwin
 
 request := new UIAutomation.IUIAutomationCacheRequest(automation.CreateCacheRequest())
-;MsgBox % "value: " request.TreeScope
-;request.TreeScope := UIAutomation.TreeScope.Children
+request.TreeScope := UIAutomation.TreeScope.Element|UIAutomation.TreeScope.Children
+MsgBox % "Set: " request.TreeScope " == " UIAutomation.TreeScope.Element|UIAutomation.TreeScope.Children
 
 elem := new UIAutomation.IUIAutomationElement(automation.ElementFromHandleBuildCache(ComObjParameter(0x4000, hwin), ComObjParameter(0xD, request[ITL.Properties.INSTANCE_POINTER])))
 MsgBox % "The active window:`n`n" GetElementInfo(elem)
