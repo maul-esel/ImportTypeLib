@@ -12,7 +12,7 @@ class ITL_StructureArray
 
 	__Get(property)
 	{
-		local buffer, size, index, struct
+		local buffer, size, index, struct, type
 		if (property != "base" && !ITL.Properties.IsInternalProperty(property))
 		{
 			count := this[ITL.Properties.ARRAY_ELEMCOUNT]
@@ -41,7 +41,10 @@ class ITL_StructureArray
 
 			struct := this[ITL.Properties.ARRAY_INSTANCEOBJ][property]
 			if (!IsObject(struct))
-				this[ITL.Properties.ARRAY_INSTANCEOBJ][property] := struct := new this[ITL.Properties.ARRAY_ELEMTYPEOBJ]()
+			{
+				type := this[ITL.Properties.ARRAY_ELEMTYPEOBJ]
+				, this[ITL.Properties.ARRAY_INSTANCEOBJ][property] := struct := new type()
+			}
 			return struct
 		}
 	}
