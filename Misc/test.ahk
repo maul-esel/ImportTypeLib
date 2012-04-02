@@ -5,6 +5,7 @@
 SetBatchLines -1
 ListLines Off
 
+#include GetParamInfo.ahk
 #include ..\
 #include Main.ahk
 
