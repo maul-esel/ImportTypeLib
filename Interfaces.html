@@ -1,0 +1,102 @@
+﻿<!DOCTYPE html>
+<html>
+	<head>
+		<title>Interfaces - ImportTypeLib Documentation</title>
+		<link href="style.css" rel="stylesheet" type="text/css"/>
+	</head>
+	<body>
+		<h1>ImportTypeLib Documentation</h1>
+
+		<div id="content">
+
+			<h2>Usage Information - Interfaces</h2>
+			Interfaces are wrapped by ImportTypeLib. They are used to call methods and get or set properties.
+			<hr />
+
+			<h3>Creating an instance</h3>
+			Creating and instance of an interface is actually the process of enwrapping a class instance.
+			<pre class="syntax">instance := ITL_InterfaceWrapper.__New(ptr)</pre>
+
+			This form is not directly used by a script, Instead, the <code>new</code> operator can be used:
+			<pre class="example">lib := ImportTypeLib(<span class="string">&quot;C:\Path\To\MyLib.tlb&quot;</span>)<br/>ptr := new lib.MyClass() <span class="comment">; create a class instance</span><br/>instance := new lib.IMyInterface(ptr) <span class="comment">; enwrap the pointer with an interface</span></pre>
+
+			<h4>Parameter</h4>
+			<table class="param-table">
+				<tbody>
+					<tr>
+						<td>ptr</td>
+						<td>
+							The pointer to an instance of a class implementing the interface. It is not needed to query the pointer for the interface IID, as this is done internally.
+						</td>
+					</tr>
+				</tbody>
+			</table>
+
+			<h4>Returns</h4>
+			The returned <code>instance</code> is an object which can be used to call methods and get/set properties as described on this page.
+
+			<h4>Throws</h4>
+			If the given pointer is invalid or if querying that pointer for the interface fails, an exception is thrown.
+
+			<hr />
+			
+			<h3>Calling a method</h3>
+			Calling an interface method is as intuitive and natural as with native support.
+			<pre class="syntax">retVal := instance.MethodName([Param1, Param2, Param3, ...])</pre>
+			
+			<h4>Parameter</h4>
+			<table class="param-table">
+				<tbody>
+					<tr>
+						<td>MethodName</td>
+						<td>
+							The name of the method as in the interface definition.
+						</td>
+					</tr>
+					<tr>
+						<td>Param1, Param2, Param3, ...</td>
+						<td>
+							The parameters as required by the method being called. Right now, it <em>might</em> be necessary for <em>some</em> parameters to be explicitly typed:
+							<pre class="example">VT_UNKNOWN := 0xD<br/>instance.MyMethod(ComObjParameter(VT_UNKNOWN, ptr))</pre>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+			
+			<h4>Returns</h4>
+			The return value is the return value of the method, or to be exact, the value of the parameter being marked with the <code>[retval]</code> attribute in the type library.
+
+			<h4>Throws</h4>
+			An exception is thrown if the method does not exist or can't be called or if calling the method returns a failure code.
+
+			<h4>Remarks</h4>
+			Unlike with AutoHotkey builtin COM support, the syntax matters: for example, a method can <strong>not</strong> be called like so:
+			<pre class="example">instance.Method <span class="comment">; incorrect: the brackets () are required. In this way, a property would be retrieved.</span><br/>instance.Method() <span class="comment">; correct</span></pre>
+			<hr />
+
+			<h3>Retrieving or setting properties</h3>
+			Properties in an interfaces can be retrieved and, if the interface allows it, set in an easy natural way as well.
+			<pre class="syntax">value := instance.Property <span class="comment">; retrieve a property value</span><br/>instance.Property := value <span class="comment">; change the value of a property</span></pre>
+
+			<h4>Parameter</h4>
+			<table class="param-table">
+				<tbody>
+					<tr>
+						<td>value</td>
+						<td>
+							Receives the value of a property when retrieving a property or holds the new value the property is set to.
+							As with calling methods, setting a property might require the value to be explicitly typed.
+						</td>
+					</tr>
+				</tbody>
+			</table>
+
+			<h4>Returns</h4>
+			Retrieving a property of course returns the value, setting a property returns the value given. This allows "chaining" such as in this example:
+			<pre class="example">copy := instance.Property := value <span class="comment">; "copy" holds now the same value as "value"</span></pre>
+
+			<h4>Throws</h4>
+			An exception may for example occur if the property does not exist, is read-only (and an attempt is made to set it) or if the value for a set-operation is not properly typed.
+		</div>
+	</body>
+</html>
