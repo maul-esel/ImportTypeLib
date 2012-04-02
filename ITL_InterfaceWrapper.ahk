@@ -31,17 +31,17 @@ class ITL_InterfaceWrapper extends ITL.ITL_WrapperBaseClass
 		, instance := this[ITL.Properties.INSTANCE_POINTER]
 
 		; init structures
-		if (VarSetCapacity(dispparams, sizeof_DISPPARAMS, 00) != sizeof_DISPPARAMS)
+		if (VarSetCapacity(dispparams, sizeof_DISPPARAMS, 00) < sizeof_DISPPARAMS)
 		{
 			;throw Exception("Out of memory.", -1)
 			throw Exception(ITL_FormatException("Out of memory", "Memory allocation for DISPPARAMS failed.", ErrorLevel)*)
 		}
-		if (VarSetCapacity(result, sizeof_VARIANT, 00) != sizeof_VARIANT)
+		if (VarSetCapacity(result, sizeof_VARIANT, 00) < sizeof_VARIANT)
 		{
 			;throw Exception("Out of memory.", -1)
 			throw Exception(ITL_FormatException("Out of memory", "Memory allocation for the result VARIANT failed.", ErrorLevel)*)
 		}
-		if (VarSetCapacity(excepInfo, sizeof_EXCEPINFO, 00) != sizeof_EXCEPINFO)
+		if (VarSetCapacity(excepInfo, sizeof_EXCEPINFO, 00) < sizeof_EXCEPINFO)
 		{
 			;throw Exception("Out of memory.", -1)
 			throw Exception(ITL_FormatException("Out of memory", "Memory allocation for EXCEPINFO failed.", ErrorLevel)*)
@@ -69,8 +69,8 @@ class ITL_InterfaceWrapper extends ITL.ITL_WrapperBaseClass
 
 		if (paramCount > 0)
 		{
-			if (VarSetCapacity(rgvarg, sizeof_VARIANT * paramCount, 00) != (sizeof_VARIANT * paramCount)) ; create VARIANT array
-				throw Exception("Out of memory.", -1)
+			if (VarSetCapacity(rgvarg, sizeof_VARIANT * paramCount, 00) < (sizeof_VARIANT * paramCount)) ; create VARIANT array
+				throw Exception(ITL_FormatException("Out of memory.", "Memory allocation for VARIANT array failed.", ErrorLevel)*)
 
 			hr := DllCall(NumGet(NumGet(info+0), 24*A_PtrSize, "Ptr"), "Ptr", info, "UInt", dispid, "UInt", INVOKEKIND_FUNC, "UInt*", index) ; ITypeInfo2::GetFuncIndexOfMemId(_this, dispid, invkind, [out] index)
 			if (ITL_FAILED(hr) || index == -1)
