@@ -60,7 +60,7 @@ ITL_ArrayToSafeArray(array, vt)
 	if (!psa)
 	{
 		throw Exception(ITL_FormatException("Failed to convert an array to a SAFEARRAY."
-										, "SafeArrayCreate() retruned NULL."
+										, "SafeArrayCreate() returned NULL."
 										, ErrorLevel)*)
 	}
 
