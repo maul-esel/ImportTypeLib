@@ -1,4 +1,4 @@
-; various misc. helper functions, later t be sorted out to separate classes / libs / files.
+; various misc. helper functions, later to be sorted out to separate classes / libs / files.
 
 ITL_IsSafeArray(obj)
 {
@@ -8,10 +8,9 @@ ITL_IsSafeArray(obj)
 
 ITL_SafeArrayType(obj)
 {
-	static VT_ARRAY := 0x2000, VT_NULL := 1
+	static VT_ARRAY := 0x2000
 	if (ITL_IsSafeArray(obj))
 		return ComObjType(obj) ^ VT_ARRAY
-	return VT_NULL
 }
 
 ITL_CreateStructureSafeArray(type, dims*)
