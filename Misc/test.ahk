@@ -51,6 +51,9 @@ try {
 
 	request := new UIAutomation.IUIAutomationCacheRequest(automation.CreateCacheRequest())
 	request.TreeScope := UIAutomation.TreeScope.Element|UIAutomation.TreeScope.Children
+	cond := new UIAutomation.IUIAutomationCondition(automation.CreateFalseCondition())
+	request.TreeFilter := cond
+	MsgBox % "filter: " request.TreeFilter " == " cond[ITL.Properties.INSTANCE_POINTER]
 
 	elem := new UIAutomation.IUIAutomationElement(automation.ElementFromHandleBuildCache(ComObjParameter(0x4000, hwin), request))
 	MsgBox % "The window under the mouse:`n`n" GetElementInfo(elem)

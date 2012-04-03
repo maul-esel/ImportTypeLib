@@ -53,6 +53,7 @@ ImportTypeLib(lib, version = "1.0")
 #include Lib\ITL_VARIANT.ahk
 #include Lib\ITL_FormatException.ahk
 #include Lib\ITL_IsComObject.ahk
+#include Lib\ITL_ParamToVARIANT.ahk
 
 #include ITL_CoClassConstructor.ahk
 #include ITL_AbstractClassConstructor.ahk

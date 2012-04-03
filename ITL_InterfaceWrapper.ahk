@@ -102,78 +102,11 @@ class ITL_InterfaceWrapper extends ITL.ITL_WrapperBaseClass
 			Loop % paramCount
 			{
 				tdesc := paramArray + (A_Index - 1) * sizeof_ELEMDESC ; ELEMDESC[A_Index - 1]::tdesc
-				, vt := NumGet(1*tdesc, A_PtrSize, "UShort") ; TYPEDESC::vt
-
-				indirectionLevel := 0
-				while (vt == VT_PTR)
-				{
-					tdesc := NumGet(1*tdesc, 00, "Ptr") ; TYPEDESC::lptdesc
-					, vt := NumGet(1*tdesc, A_PtrSize, "UShort") ; TYPEDESC::vt
-					, indirectionLevel++
-				}
-
-				if (vt == VT_USERDEFINED && IsObject(params[A_Index]) && !ITL_IsComObject(params[A_Index])) ; a struct or interface wrapper was passed
-				{
-					VarSetCapacity(variant, sizeof_VARIANT, 00) ; init variant
-					, NumPut(params[A_Index][ITL.Properties.INSTANCE_POINTER], variant, 08, "Ptr") ; ... and put instance pointer into it
-
-					; get the type kind of the given wrapper:
-					; =============================================
-					refHandle := NumGet(1*tdesc, 00, "UInt") ; TYPEDESC::hreftype
-					hr := DllCall(NumGet(NumGet(info+0), 14*A_PtrSize, "Ptr"), "Ptr", info, "UInt", refHandle, "Ptr*", refInfo, "Int") ; ITypeInfo::GetRefTypeInfo()
-					if (ITL_FAILED(hr) || !refInfo)
-					{
-						throw Exception(ITL_FormatException("Failed to call method """ typeName "::" method "()""!"
-														, "ITypeInfo::GetRefTypeInfo() for param " A_Index " (handle: " refHandle ") failed."
-														, ErrorLevel, hr
-														, !refInfo, "Invalid ITypeInfo pointer: " refInfo)*)
-					}
-					hr := DllCall(NumGet(NumGet(refInfo+0), 03*A_PtrSize, "Ptr"), "Ptr", refInfo, "Ptr*", refAttr, "Int") ; ITypeInfo::GetTypeAttr()
-					if (ITL_FAILED(hr) || !refAttr)
-					{
-						throw Exception(ITL_FormatException("Failed to call method """ typeName "::" method "()""!"
-														, "ITypeInfo::GetTypeAttr() for param " A_Index " failed."
-														, ErrorLevel, hr
-														, !refAttr, "Invalid TYPEATTR pointer: " refAttr)*)
-					}
-					refKind := NumGet(1*refAttr, 36+A_PtrSize, "UInt")
-					; =============================================
-
-					if (refKind == TYPEKIND_RECORD)
-					{
-						; if (indirectionLevel > 0)
-						; 	...
-						NumPut(VT_RECORD, variant, 00, "UShort")
-						, NumPut(params[A_Index].base[ITL.Properties.TYPE_RECORDINFO], variant, 08 + A_PtrSize, "Ptr")
-					}
-					else if (refKind == TYPEKIND_INTERFACE)
-					{
-						if (indirectionLevel < 1)
-						{
-							throw Exception(ITL_FormatException("Failed to call method """ typeName "::" method "()""!"
-															, "Interfaces cannot be passed by value."
-															, ErrorLevel, ""
-															, indirectionLevel < 1, "Invalid indirection level: " indirectionLevel)*)
-						}
-						NumPut(VT_UNKNOWN, variant, 00, "UShort")
-					}
-					else
-					{
-						ObjRelease(refInfo) ; cleanup
-						throw Exception(ITL_FormatException("Failed to call method """ typeName "::" method "()""!"
-														, "Cannot handle other wrappers than interfaces and structures."
-														, ErrorLevel, "")*)
-					}
-					ObjRelease(refInfo), refInfo := 0, refAttr := 0 ; cleanup
-				}
-				; todo: handle arrays (native and safe)
-				else
-					ITL_VARIANT_Create(params[A_Index], variant) ; create VARIANT
-
-				ITL_Mem_Copy(&variant, &rgvarg + (paramCount - A_Index) * sizeof_VARIANT, sizeof_VARIANT) ; put the VARIANT structure into the array
+				, ITL_ParamToVARIANT(info, tdesc, params[A_Index], variant, A_Index)
+				, ITL_Mem_Copy(&variant, &rgvarg + (paramCount - A_Index) * sizeof_VARIANT, sizeof_VARIANT) ; put the VARIANT structure into the array
 			}
 			NumPut(&rgvarg, dispparams, 00, "Ptr") ; DISPPARAMS::rgvarg - the pointer to the VARIANT array
-			NumPut(paramCount, dispparams, 2 * A_PtrSize, "UInt") ; DISPPARAMS::cArgs - the number of arguments passed
+			, NumPut(paramCount, dispparams, 2 * A_PtrSize, "UInt") ; DISPPARAMS::cArgs - the number of arguments passed
 
 			DllCall(NumGet(NumGet(info+0), 20*A_PtrSize, "Ptr"), "Ptr", info, "Ptr", funcdesc) ; ITypeInfo::ReleaseFuncDesc(_this, funcdesc)
 		}
@@ -272,11 +205,13 @@ class ITL_InterfaceWrapper extends ITL.ITL_WrapperBaseClass
 	{
 		; code inspired by AutoHotkey_L source (script_com.cpp)
 		static DISPATCH_PROPERTYPUTREF := 0x8, DISPATCH_PROPERTYPUT := 0x4
-		, DISPID_UNKNOWN := -1, DISPID_PROPERTYPUT := ""
-		, sizeof_DISPPARAMS := 8 + 2 * A_PtrSize, sizeof_EXCEPINFO := 12 + 5 * A_PtrSize
-		, VT_UNKNOWN := 13, VT_DISPATCH := 9
-		, DISP_E_MEMBERNOTFOUND := -2147352573
+			, DISPID_UNKNOWN := -1, DISPID_PROPERTYPUT := ""
+			, sizeof_DISPPARAMS := 8 + 2 * A_PtrSize, sizeof_EXCEPINFO := 12 + 5 * A_PtrSize
+			, VT_UNKNOWN := 13, VT_DISPATCH := 9
+			, DISP_E_MEMBERNOTFOUND := -2147352573
+			, INVOKEKIND_PROPERTYPUT := 4, INVOKEKIND_PROPERTYPUTREF := 8
 		local variant, dispparams, hr, info, dispid := DISPID_UNKNOWN, vt, instance, excepInfo, err_index := 0, variant, typeName
+			, index := -1, funcdesc := 0, paramArray
 
 		; need to store it that way as "DISPID_PROPERTYPUT := -3, &DISPID_PROPERTYPUT" would be a STRING address
 		if (!DISPID_PROPERTYPUT)
@@ -294,14 +229,6 @@ class ITL_InterfaceWrapper extends ITL.ITL_WrapperBaseClass
 				throw Exception(ITL_FormatException("Out of memory", "Memory allocation for EXCEPINFO failed.", ErrorLevel)*)
 			}
 
-			; create a VARIANT from the new value
-			ITL_VARIANT_Create(value, variant)
-			NumPut(&variant, dispparams, 00, "Ptr") ; DISPPARAMS::rgvarg - the VARIANT "array", a single item here
-			NumPut(1, dispparams, 2 * A_PtrSize, "UInt") ; DISPPARAMS::cArgs - the count of VARIANTs (1 in this case)
-
-			NumPut(&DISPID_PROPERTYPUT, dispparams, A_PtrSize, "Ptr") ; DISPPARAMS::rgdispidNamedArgs - indicate a property is being set
-			NumPut(1, dispparams, 2 * A_PtrSize + 4, "UInt") ; DISPPARAMS::cNamedArgs
-
 			info := this.base[ITL.Properties.TYPE_TYPEINFO]
 			, instance := this[ITL.Properties.INSTANCE_POINTER]
 			, typeName := this.base[ITL.Properties.TYPE_NAME]
@@ -315,6 +242,48 @@ class ITL_InterfaceWrapper extends ITL.ITL_WrapperBaseClass
 												, ErrorLevel, hr
 												, dispid == DISPID_UNKNOWN, "Invalid DISPID: " dispid)*)
 			}
+
+			; ITypeInfo2::GetFuncIndexOfMemId(_this, dispid, invkind, [out] index)
+			hr := DllCall(NumGet(NumGet(info+0), 24*A_PtrSize, "Ptr"), "Ptr", info, "UInt", dispid, "UInt", INVOKEKIND_PROPERTYPUT, "UInt*", index)
+			if (ITL_FAILED(hr) || index == -1)
+			{
+				; ITypeInfo2::GetFuncIndexOfMemId(_this, dispid, invkind, [out] index)
+				hr := DllCall(NumGet(NumGet(info+0), 24*A_PtrSize, "Ptr"), "Ptr", info, "UInt", dispid, "UInt", INVOKEKIND_PROPERTYPUTREF, "UInt*", index) ; retry with INVOKEKIND_PROPERTYPUTREF
+				if (ITL_FAILED(hr) || index == -1) ; still no success? then throw!
+				{
+					throw Exception(ITL_FormatException("Failed to set property """ typeName "::" property """ to """ value """!"
+													, "ITypeInfo2::GetFuncIndexOfMemId() failed."
+													, ErrorLevel, hr
+													, index == -1, "Invalid function index: " index)*)
+				}
+			}
+
+			hr := DllCall(NumGet(NumGet(info+0), 05*A_PtrSize, "Ptr"), "Ptr", info, "UInt", index, "Ptr*", funcdesc) ; ITypeInfo::GetFuncDesc(_this, index, [out] funcdesc)
+			if (ITL_FAILED(hr) || !funcdesc)
+			{
+				throw Exception(ITL_FormatException("Failed to set property """ typeName "::" property """ to """ value """!"
+												, "ITypeInfo::GetFuncDesc() failed (index " index ")."
+												, ErrorLevel, hr
+												, !funcdesc, "Invalid FUNCDESC pointer: " funcdesc)*)
+			}
+
+			paramArray := NumGet(1*funcdesc, 04 + A_PtrSize, "Ptr") ; FUNCDESC::lprgelemdescParam
+			if (!paramArray)
+			{
+				throw Exception(ITL_FormatException("Failed to set property """ typeName "::" property """ to """ value """!"
+												, "The array of parameter descriptions (FUNCDESC::lprgelemdescParam) could not be read."
+												, ErrorLevel, ""
+												, !paramArray, "Invalid ELEMDESC[] pointer: " paramArray)*)
+			}
+
+			; create a VARIANT from the new value
+			ITL_ParamToVARIANT(info, paramArray, value, variant, 1)
+
+			NumPut(&variant, dispparams, 00, "Ptr") ; DISPPARAMS::rgvarg - the VARIANT "array", a single item here
+			, NumPut(1, dispparams, 2 * A_PtrSize, "UInt") ; DISPPARAMS::cArgs - the count of VARIANTs (1 in this case)
+
+			NumPut(&DISPID_PROPERTYPUT, dispparams, A_PtrSize, "Ptr") ; DISPPARAMS::rgdispidNamedArgs - indicate a property is being set
+			, NumPut(1, dispparams, 2 * A_PtrSize + 4, "UInt") ; DISPPARAMS::cNamedArgs
 
 			; get VARTYPE from the VARIANT structure
 			vt := NumGet(variant, 00, "UShort")
