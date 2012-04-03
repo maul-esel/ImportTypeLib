@@ -3,14 +3,19 @@
 ITL_IsSafeArray(obj)
 {
 	static VT_ARRAY := 0x2000
-	return IsObject(obj) && ITL_HasEnumFlag(ComObjType(obj), VT_ARRAY)
+	local vt := 0
+	return (IsObject(obj) && ITL_HasEnumFlag(ComObjType(obj), VT_ARRAY)) ; a wrapper object was passed
+		|| (ITL_SUCCEEDED(DllCall("OleAut32\SafeArrayGetVartype", "Ptr", obj, "UShort*", vt, "Int")) && vt && ITL_IsSafeArray(ComObjParameter(VT_ARRAY|vt, obj))) ; a raw SAFEARRAY pointer was passed
 }
 
 ITL_SafeArrayType(obj)
 {
 	static VT_ARRAY := 0x2000
+	local vt := 0
 	if (ITL_IsSafeArray(obj))
-		return ComObjType(obj) ^ VT_ARRAY
+		return IsObject(obj)
+			? (ComObjType(obj) ^ VT_ARRAY) ; a wrapper object was passed
+			: (ITL_SUCCEEDED(DllCall("OleAut32\SafeArrayGetVartype", "Ptr", obj, "UShort*", vt, "Int")) && vt) ? vt : "" ; a raw SAFEARRAY pointer was passed
 }
 
 ITL_CreateStructureSafeArray(type, dims*)
