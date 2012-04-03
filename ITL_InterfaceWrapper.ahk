@@ -20,14 +20,14 @@ class ITL_InterfaceWrapper extends ITL.ITL_WrapperBaseClass
 	{
 		; code inspired by AutoHotkey_L source (script_com.cpp)
 		static DISPATCH_METHOD := 0x1
-		, DISPID_UNKNOWN := -1
-		, sizeof_DISPPARAMS := 8 + 2 * A_PtrSize, sizeof_EXCEPINFO := 12 + 5 * A_PtrSize, sizeof_VARIANT := 8 + 2 * A_PtrSize, sizeof_ELEMDESC := 4 * A_PtrSize
-		, DISP_E_MEMBERNOTFOUND := -2147352573, DISP_E_UNKNOWNNAME := -2147352570
-		, INVOKEKIND_FUNC := 1
-		, VT_USERDEFINED := 29, VT_RECORD := 36, VT_UNKNOWN := 13, VT_PTR := 26
-		, TYPEKIND_RECORD := 1, TYPEKIND_INTERFACE := 3
-		local paramCount, dispparams, rgvarg := 0, hr, info, dispid := DISPID_UNKNOWN, instance, excepInfo, err_index, result, variant, index := -1, funcdesc := 0, vt ;, fn
-		, refHandle, refInfo := 0, refAttr := 0, refKind, tdesc, indirectionLevel
+			, DISPID_UNKNOWN := -1
+			, sizeof_DISPPARAMS := 8 + 2 * A_PtrSize, sizeof_EXCEPINFO := 12 + 5 * A_PtrSize, sizeof_VARIANT := 8 + 2 * A_PtrSize, sizeof_ELEMDESC := 4 * A_PtrSize
+			, DISP_E_MEMBERNOTFOUND := -2147352573, DISP_E_UNKNOWNNAME := -2147352570, DISP_E_EXCEPTION := -2147352567, DISP_E_TYPEMISMATCH := -2147352571, DISP_E_PARAMNOTFOUND := -2147352572, DISP_E_BADVARTYPE := -2147352568
+			, INVOKEKIND_FUNC := 1
+			, VT_USERDEFINED := 29, VT_RECORD := 36, VT_UNKNOWN := 13, VT_PTR := 26
+			, TYPEKIND_RECORD := 1, TYPEKIND_INTERFACE := 3
+		local paramCount, dispparams, rgvarg := 0, hr, info, dispid := DISPID_UNKNOWN, instance, excepInfo, err_index := -1, result, variant, index := -1, funcdesc := 0, vt, fnFill ;, fn
+			, refHandle, refInfo := 0, refAttr := 0, refKind, tdesc, indirectionLevel
 
 		paramCount := params.maxIndex() > 0 ? params.maxIndex() : 0 ; the ternary is necessary, otherwise it would hold an empty string, causing calculations to fail
 		, info := this.base[ITL.Properties.TYPE_TYPEINFO]
@@ -174,9 +174,9 @@ class ITL_InterfaceWrapper extends ITL.ITL_WrapperBaseClass
 				}
 				; todo: handle arrays (native and safe)
 				else
-					ITL_VARIANT_Create(params[A_Index], variant) ; create VARIANT and put it in the array
+					ITL_VARIANT_Create(params[A_Index], variant) ; create VARIANT
 
-				ITL_Mem_Copy(&variant, &rgvarg + (paramCount - A_Index) * sizeof_VARIANT, sizeof_VARIANT)
+				ITL_Mem_Copy(&variant, &rgvarg + (paramCount - A_Index) * sizeof_VARIANT, sizeof_VARIANT) ; put the VARIANT structure into the array
 			}
 			NumPut(&rgvarg, dispparams, 00, "Ptr") ; DISPPARAMS::rgvarg - the pointer to the VARIANT array
 			NumPut(paramCount, dispparams, 2 * A_PtrSize, "UInt") ; DISPPARAMS::cArgs - the number of arguments passed
@@ -185,8 +185,7 @@ class ITL_InterfaceWrapper extends ITL.ITL_WrapperBaseClass
 		}
 
 		; invoke the function
-		; currently, the excepinfo structure is not used; also, the last parameter (index of a bad argument if any) is not passed
-		hr := DllCall(NumGet(NumGet(info+0), 11*A_PtrSize, "Ptr"), "Ptr", info, "Ptr", instance, "UInt", dispid, "UShort", DISPATCH_METHOD, "Ptr", &dispparams, "Ptr", &result, "Ptr", &excepInfo, "Ptr", 0, "Int") ; ITypeInfo::Invoke()
+		hr := DllCall(NumGet(NumGet(info+0), 11*A_PtrSize, "Ptr"), "Ptr", info, "Ptr", instance, "UInt", dispid, "UShort", DISPATCH_METHOD, "Ptr", &dispparams, "Ptr", &result, "Ptr", &excepInfo, "UInt*", err_index, "Int") ; ITypeInfo::Invoke()
 		if (ITL_FAILED(hr))
 		{
 			/*
@@ -202,11 +201,21 @@ class ITL_InterfaceWrapper extends ITL.ITL_WrapperBaseClass
 				}
 			}
 			*/
-			; use EXCEPINFO here!
+			if (hr == DISP_E_EXCEPTION)
+			{
+				fnFill := NumGet(excepInfo, 08+4*A_PtrSize,	"Ptr") ; EXCEPINFO::pfnDeferredFillIn
+				if (fnFill)
+					DllCall(fnFill, "Ptr", &excepInfo)
+				hr := (hr := NumGet(excepInfo, 08+5*A_PtrSize, "Int")) ? hr : NumGet(excepInfo, 00, "UShort") ; get EXCEPINFO::scode or EXCEPINFO::wCode
+				throw Exception(ITL_FormatException("Failed to call a method."
+												, "The called method raised an exception: Source=""" StrGet(NumGet(excepInfo, 04, "Ptr")) """, Message=""" StrGet(NumGet(excepInfo, 04 + A_PtrSize, "Ptr")) """"
+												, ErrorLevel, hr)*)
+			}
 			;throw Exception("""" method "()"" could not be called.", -1, ITL_FormatError(hr))
 			throw Exception(ITL_FormatException("Failed to call a method."
 											, "ITypeInfo::Invoke() failed for """ method """."
-											, ErrorLevel, hr)*)
+											, ErrorLevel, hr
+											, (hr == DISP_E_TYPEMISMATCH || hr == DISP_E_PARAMNOTFOUND || hr == DISP_E_BADVARTYPE), "Invalid argument: #" err_index)*)
 		}
 		return ITL_VARIANT_GetValue(&result) ; return the result of the call
 	}
