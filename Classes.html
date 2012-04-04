@@ -15,10 +15,10 @@
 			
 			<h3>Creating an instance</h3>
 			Creating and instance of a class is the most common thing to do with it.
-			<pre class="syntax">ptr := ITL_CoClassWrapper.__New([IID])</pre>
+			<pre class="syntax">ptr <span class="operator">:=</span> ITL_CoClassWrapper<span class="operator">.</span>__New<span class="operator">(</span>[IID]<span class="operator">)</span></pre>
 			
 			This form is not directly used by a script, Instead, the <code>new</code> operator can be used:
-			<pre class="example">lib := ImportTypeLib(<span class="string">&quot;C:\Path\To\MyLib.tlb&quot;</span>)<br/>ptr := new lib.MyClass()</pre>
+			<pre class="example">lib <span class="operator">:=</span> ImportTypeLib<span class="operator">(</span><span class="string">&quot;C:\Path\To\MyLib.tlb&quot;</span><span class="operator">)</span><br/>ptr <span class="operator">:=</span> <span class="keyword">new</span> lib<span class="operator">.</span>MyClass<span class="operator">()</span></pre>
 			
 			<h4>Parameter</h4>
 			<table class="param-table">
@@ -29,7 +29,7 @@
 							In the form showed above, without parameters, a new class instance is created for the default interface of the coclass.
 							If no such default exists, an exception is thrown.
 							To prevent that or to use another than the default interface, an IID may be given. If the interface is part of the type library itself, the IID may be obtained and used like so:
-							<pre class="example">IID_IMyInterface := lib.GetGUID(<span class="string">"IMyInterface"</span>) <span class="comment">; gets the IID of the interface from the <a href="TypeLibObj.html">type library</a></span><br/>instance := new lib.MyClass(IID_IMyInterface)</pre>
+							<pre class="example">IID_IMyInterface <span class="operator">:=</span> lib<span class="operator">.</span>GetGUID<span class="operator">(</span><span class="string">"IMyInterface"</span><span class="operator">)</span> <span class="comment">; gets the IID of the interface from the <a href="TypeLibObj.html">type library</a></span><br/>instance <span class="operator">:=</span> new lib<span class="operator">.</span>MyClass<span class="operator">(</span>IID_IMyInterface<span class="operator">)</span></pre>
 						</td>
 					</tr>
 				</tbody>
@@ -38,7 +38,7 @@
 			<h4>Returns</h4>
 			The returned <code>ptr</code> is not an object, but a pointer.
 			This pointer can be enwrapped with the corresponding <a href="Interfaces.html">interface instance</a> like so:
-			<pre class="example">obj := new lib.IMyInterface(ptr)</pre>
+			<pre class="example">obj <span class="operator">:=</span> new lib<span class="operator">.</span>IMyInterface<span class="operator">(</span>ptr<span class="operator">)</span></pre>
 			
 			<h4>Throws</h4>
 			If no IID is given and there's no default either, if the specified IID is not registered within the system, or if any other error occurs, an exception is thrown.

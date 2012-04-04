@@ -15,10 +15,10 @@
 
 			<h3>Creating an instance</h3>
 			Creating and instance of an interface is actually the process of enwrapping a class instance.
-			<pre class="syntax">instance := ITL_InterfaceWrapper.__New(ptr)</pre>
+			<pre class="syntax">instance <span class="operator">:=</span> ITL_InterfaceWrapper<span class="operator">.</span>__New<span class="operator">(</span>ptr<span class="operator">)</span></pre>
 
 			This form is not directly used by a script, Instead, the <code>new</code> operator can be used:
-			<pre class="example">lib := ImportTypeLib(<span class="string">&quot;C:\Path\To\MyLib.tlb&quot;</span>)<br/>ptr := new lib.MyClass() <span class="comment">; create a class instance</span><br/>instance := new lib.IMyInterface(ptr) <span class="comment">; enwrap the pointer with an interface</span></pre>
+			<pre class="example">lib <span class="operator">:=</span> ImportTypeLib<span class="operator">(</span><span class="string">&quot;C:\Path\To\MyLib.tlb&quot;</span><span class="operator">)</span><br/>ptr <span class="operator">:=</span> <span class="keyword">new</span> lib<span class="operator">.</span>MyClass<span class="operator">()</span> <span class="comment">; create a class instance</span><br/>instance <span class="operator">:=</span> <span class="keyword">new</span> lib<span class="operator">.</span>IMyInterface<span class="operator">(</span>ptr<span class="operator">)</span> <span class="comment">; enwrap the pointer with an interface</span></pre>
 
 			<h4>Parameter</h4>
 			<table class="param-table">
@@ -42,7 +42,7 @@
 			
 			<h3>Calling a method</h3>
 			Calling an interface method is as intuitive and natural as with native support.
-			<pre class="syntax">retVal := instance.MethodName([Param1, Param2, Param3, ...])</pre>
+			<pre class="syntax">retVal <span class="operator">:=</span> instance<span class="operator">.</span>MethodName<span class="operator">(</span>[Param1<span class="operator">,</span> Param2<span class="operator">,</span> Param3<span class="operator">,</span> ...]<span class="operator">)</span></pre>
 			
 			<h4>Parameter</h4>
 			<table class="param-table">
@@ -57,7 +57,7 @@
 						<td>Param1, Param2, Param3, ...</td>
 						<td>
 							The parameters as required by the method being called. Right now, it <em>might</em> be necessary for <em>some</em> parameters to be explicitly typed:
-							<pre class="example">VT_UNKNOWN := 0xD<br/>instance.MyMethod(ComObjParameter(VT_UNKNOWN, ptr))</pre>
+							<pre class="example">VT_UNKNOWN <span class="operator">:=</span> 0xD<br/>instance<span class="operator">.</span>MyMethod<span class="operator">(</span>ComObjParameter<span class="operator">(</span>VT_UNKNOWN<span class="operator">,</span> ptr<span class="operator">))</span></pre>
 						</td>
 					</tr>
 				</tbody>
@@ -71,12 +71,12 @@
 
 			<h4>Remarks</h4>
 			Unlike with AutoHotkey builtin COM support, the syntax matters: for example, a method can <strong>not</strong> be called like so:
-			<pre class="example">instance.Method <span class="comment">; incorrect: the brackets () are required. In this way, a property would be retrieved.</span><br/>instance.Method() <span class="comment">; correct</span></pre>
+			<pre class="example">instance<span class="operator">.</span>Method <span class="comment">; incorrect: the brackets () are required. In this way, a property would be retrieved.</span><br/>instance<span class="operator">.</span>Method<span class="operator">()</span> <span class="comment">; correct</span></pre>
 			<hr />
 
 			<h3>Retrieving or setting properties</h3>
 			Properties in an interfaces can be retrieved and, if the interface allows it, set in an easy natural way as well.
-			<pre class="syntax">value := instance.Property <span class="comment">; retrieve a property value</span><br/>instance.Property := value <span class="comment">; change the value of a property</span></pre>
+			<pre class="syntax">value <span class="operator">:=</span> instance<span class="operator">.</span>Property <span class="comment">; retrieve a property value</span><br/>instance<span class="operator">.</span>Property <span class="operator">:=</span> value <span class="comment">; change the value of a property</span></pre>
 
 			<h4>Parameter</h4>
 			<table class="param-table">
@@ -99,7 +99,7 @@
 
 			<h4>Returns</h4>
 			Retrieving a property of course returns the value, setting a property returns the value given. This allows "chaining" such as in this example:
-			<pre class="example">copy := instance.Property := value <span class="comment">; "copy" holds now the same value as "value"</span></pre>
+			<pre class="example">copy <span class="operator">:=</span> instance<span class="operator">.</span>Property <span class="operator">:=</span> value <span class="comment">; "copy" holds now the same value as "value"</span></pre>
 
 			<h4>Throws</h4>
 			An exception may for example occur if the property does not exist, is read-only (and an attempt is made to set it) or if the value for a set-operation is not properly typed.

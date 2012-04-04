@@ -15,7 +15,7 @@
 
 			<h3>Retrieving a GUID</h3>
 			The <code>GetGUID()</code> method can be used to obtain a GUID for the type library itself or for any contained type.
-			<pre class="syntax">guid := ITL_TypeLibWrapper.GetGUID([obj = -1, returnRaw = false, passRaw = false])</pre>
+			<pre class="syntax">guid <span class="operator">:=</span> ITL_TypeLibWrapper<span class="operator">.</span>GetGUID<span class="operator">(</span>[obj <span class="operator">=</span> -1<span class="operator">,</span> returnRaw <span class="operator">=</span> false<span class="operator">,</span> passRaw <span class="operator">=</span> false]<span class="operator">)</span></pre>
 
 			<h4>Parameter</h4>
 			<table class="param-table">
@@ -27,13 +27,13 @@
 							<p>Otherwise, it can be set to
 								<ul>
 									<li>the index of the type in the type library:
-										<pre class="example">guid := lib.GetGUID(3)</pre>
+										<pre class="example">guid <span class="operator">:=</span> lib<span class="operator">.</span>GetGUID<span class="operator">(</span>3<span class="operator">)</span></pre>
 									</li>
 									<li>the name of the type in the type library:
-										<pre class="example">guid := lib.GetGUID(<span class="string">"IMyInterface"</span>)</pre>
+										<pre class="example">guid <span class="operator">:=</span> lib<span class="operator">.</span>GetGUID<span class="operator">(</span><span class="string">"IMyInterface"</span><span class="operator">)</span></pre>
 									</li>
 									<li>the type object itself:
-										<pre class="example">guid := lib.GetGUID(lib.IMyInterface)</pre>
+										<pre class="example">guid <span class="operator">:=</span> lib<span class="operator">.</span>GetGUID<span class="operator">(</span>lib.IMyInterface<span class="operator">)</span></pre>
 									</li>
 									<li>a raw pointer to an <code>ITypeInfo</code> COM interface. See the <code>passRaw</code> parameter for more information.</li>
 								</ul>

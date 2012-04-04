@@ -15,7 +15,7 @@
 
 			<h3>ImportTypeLib()</h3>
 			Loads a type library object.
-			<pre class="syntax">ImportTypeLib(File)<br/>ImportTypeLib(GUID [, Version = <span class="string">&quot;1.0&quot;</span>])</pre>
+			<pre class="syntax">ImportTypeLib<span class="operator">(</span>File<span class="operator">)</span><br/>ImportTypeLib<span class="operator">(</span>GUID [<span class="operator">,</span> Version <span class="operator">=</span> <span class="string">&quot;1.0&quot;</span>]<span class="operator">)</span></pre>
 			<h4>Parameter</h4>
 			<table class="param-table">
 				<tbody>
@@ -25,7 +25,7 @@
 							The file that contains the type library. This should be a *.exe, *.dll, *.olb or *.tlb file.
 							In case it is <em>not</em> a *.tlb file and therefore not a standalone type library, a type library resource is loaded.
 							This defaults to the first type library resource in that specified file. To load another resource, append the index to the path:
-							<pre class="example">lib := ImportTypeLib(<span class="string">&quot;C:\Path\to\file.dll\2&quot;</span>) <span class="comment">; loads the 2nd type library</span></pre>
+							<pre class="example">lib <span class="operator">:=</span> ImportTypeLib<span class="operator">(</span><span class="string">&quot;C:\Path\to\file.dll\2&quot;</span><span class="operator">)</span> <span class="comment">; loads the 2nd type library</span></pre>
 						</td>
 					</tr>
 					<tr>
