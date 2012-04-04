@@ -1,0 +1,72 @@
+﻿<!DOCTYPE html>
+<html>
+	<head>
+		<title>Enumerations - ImportTypeLib Documentation</title>
+		<link href="style.css" rel="stylesheet" type="text/css"/>
+	</head>
+	<body>
+		<h1>ImportTypeLib Documentation</h1>
+
+		<div id="content">
+			<h2>Usage Information - Enumerations</h2>
+			Enumerations are wrapped by ImportTypeLib. They can be used to retrieve constant values which can for example be passed to methods.
+			<hr />
+
+			<h3 id="retrieve">Retrieving a constant</h3>
+			The syntax for this is quite easy:
+			<pre class="syntax">const <span class="operator">:=</span> lib<span class="operator">.</span>Enum<span class="operator">.</span>Field <span class="comment">; "Enum" is of course the name of the enumeration type</span></pre>
+
+			<h4>Parameter</h4>
+			<table class="param-table">
+				<tbody>
+					<tr>
+						<td>Field</td>
+						<td>
+							The name of the constant to retrieve, as defined. <a name="type_prefix"></a>If the field names begins with the type name followed by an underscore, this can be omitted:
+							<pre class="example"><span class="comment">; "lib" is a <a href="TypeLibObj.html">type library object</a> returned by <a href="General.html">ImportTypeLib()</a></span><br/>value <span class="operator">:=</span> lib<span class="operator">.</span>TreeScope<span class="operator">.</span>TreeScope_Children <span class="comment">; equivalent to:</span><br/>value <span class="operator">:=</span> lib<span class="operator">.</span>TreeScope<span class="operator">.</span>Children</pre>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+
+			<h4>Returns</h4>
+			The returned <code>const</code> is the integer defined in the enumeration.
+
+			<h4>Throws</h4>
+			If the given field name is unknown, if the variable pointed to by the field name is not constant (shouldn't happen in an enumeration) or if any other failure occurs during retrieval, an exception is thrown.
+			<hr />
+
+			<h3 id="enumerate">Enumerating an enumeration</h3>
+			Enumerations support enumeration of their members, which means they can be used with a <code>for</code>-Loop.
+			<pre class="syntax">enumObj <span class="operator">:=</span> lib<span class="operator">.</span>Enum<span class="operator">.</span>_NewEnum<span class="operator">()</span> <span class="comment">; less often used</span><br/><span class="keyword">for</span> field<span class="operator">,</span> value <span class="keyword">in</span> lib<span class="operator">.</span>Enum<br/>{<br/><span class="comment">	; ...</span><br/>}</pre>
+
+			<h4>Parameter</h4>
+			<table class="param-table">
+				<tbody>
+					<tr>
+						<td>field</td>
+						<td>
+							Receives the full name of the constant member (including a potential <a href="#type_prefix">type prefix</a>).
+						</td>
+					</tr>
+					<tr>
+						<td>value</td>
+						<td>
+							Receives the (integer) value of the constant.
+						</td>
+					</tr>
+				</tbody>
+			</table>
+
+			<h4>Returns</h4>
+			The object returned by <code>_NewEnum()</code> is of course an enumerator object as described <a href="http://l.autohotkey.net/docs/objects/Enumerator.htm">in the AutoHotkey_L help</a>.
+
+			<h4>Throws</h4>
+			If the enumeration process encounters any error, an exception is thrown. However, this process is only done one times, so if the first enumeration succeeds, subsequent calls won't error either.
+			<hr />
+
+			<h3 id="set">Setting a constant</h3>
+			Trying to set a member of an enumeration will result in an exception.
+		</div>
+	</body>
+</html>
