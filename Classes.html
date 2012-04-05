@@ -12,11 +12,11 @@
 			<h2>Usage Information - Classes</h2>
 			COM classes (so-called <cite>coclasses</cite>) are wrapped by ImportTypeLib. They are mainly used in conjunction with <a href="Interfaces.html">interfaces</a>.
 			<hr />
-			
+
 			<h3>Creating an instance</h3>
 			Creating and instance of a class is the most common thing to do with it.
 			<pre class="syntax">ptr <span class="operator">:=</span> ITL_CoClassWrapper<span class="operator">.</span>__New<span class="operator">(</span>[IID]<span class="operator">)</span></pre>
-			
+
 			This form is not directly used by a script, Instead, the <code>new</code> operator can be used:
 			<pre class="example">lib <span class="operator">:=</span> ImportTypeLib<span class="operator">(</span><span class="string">&quot;C:\Path\To\MyLib.tlb&quot;</span><span class="operator">)</span><br/>ptr <span class="operator">:=</span> <span class="keyword">new</span> lib<span class="operator">.</span>MyClass<span class="operator">()</span></pre>
 			
@@ -39,7 +39,7 @@
 			The returned <code>ptr</code> is not an object, but a pointer.
 			This pointer can be enwrapped with the corresponding <a href="Interfaces.html">interface instance</a> like so:
 			<pre class="example">obj <span class="operator">:=</span> new lib<span class="operator">.</span>IMyInterface<span class="operator">(</span>ptr<span class="operator">)</span></pre>
-			
+
 			<h4>Throws</h4>
 			If no IID is given and there's no default either, if the specified IID is not registered within the system, or if any other error occurs, an exception is thrown.
 			<hr />
