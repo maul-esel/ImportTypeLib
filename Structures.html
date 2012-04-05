@@ -1,0 +1,68 @@
+﻿<!DOCTYPE html>
+<html>
+	<head>
+		<title>Structures - ImportTypeLib Documentation</title>
+		<link href="style.css" rel="stylesheet" type="text/css"/>
+	</head>
+	<body>
+		<h1>ImportTypeLib Documentation</h1>
+
+		<div id="content">
+
+			<h2>Usage Information - Structures</h2>
+			With ImportTypeLib, you can use structures in the most intuitive way as well. You can get and set members and more.
+			<hr />
+
+			<h3>Creating an instance</h3>
+			Creating and instance of a structure is the first thing to do.
+			<pre class="syntax">struct <span class="operator">:=</span> <span class="keyword">new</span> lib<span class="operator">.</span>Structure<span class="operator">(</span>[ ptr <span class="operator">=</span> 0<span class="operator">,</span> noInit <span class="operator">=</span> <span class="keyword">false</span></span> ]<span class="operator">)</span></pre>
+
+			<h4>Parameter</h4>
+			<table class="param-table">
+				<tbody>
+					<tr>
+						<td>ptr</td>
+						<td>
+							If available, a pointer to the memory buffer for the new structure instance. It must be at least as large as the structure (see <a href="#getsize">GetSize()</a>).
+							If this is not given, a new buffer is allocated.<br/>
+							By default, the memory pointed to by this parameter is freed. See the next parameter.
+						</td>
+					</tr>
+					<tr>
+						<td>noInit</td>
+						<td>
+							If the previous parameter is given, the memory is by default freed. To avoid this and to use the data already available in the buffer, set this parameter to <code>true</code>.
+							This is especially important if the given pointer is returned by a method or property and already contains all the data.
+						</td>
+					</tr>
+				</tbody>
+			</table>
+
+			<h4>Returns</h4>
+			The returned <code>struct</code> is a wrapper object which youz can use to perform the operations described on this page.
+
+			<h4>Throws</h4>
+			If the creation of a new buffer or the freeing of the previous data fails, or if any other error occurs, an exception is thrown.
+			<hr />
+
+			<h3>Getting and setting members</h3>
+			<hr />
+			<h3>Enumerating members</h3>
+			<hr />
+			<h3>Cloning an instance</h3>
+			You can clone a structure instance with all its data.
+			<pre class="syntax">copy <span class="operator">:=</span> struct<span class="operator">.</span>_Clone<span class="operator">()</span><br/>copy <span class="operator">:=</span> struct<span class="operator">.</span>Clone<span class="operator">()</span></pre>
+
+			<h4>Returns</h4>
+			The returned <code>copy</code> is a wrapper object with the same data as the original.
+
+			<h4>Remarks</h4>
+			Any subsequent change to the clone or the original will not affect the other.
+			<hr />
+
+			<h3>Clearing the contents</h3>
+			<hr />
+			<h3 id="getsize">Getting the size of a structure</h3>
+		</div>
+	</body>
+</html>
